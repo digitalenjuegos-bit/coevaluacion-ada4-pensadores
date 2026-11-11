@@ -1,2 +1,4 @@
 index.html.bak_*
 .parts/
+.parts.bak_*
+.DS_Store
