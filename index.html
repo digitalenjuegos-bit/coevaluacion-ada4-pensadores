@@ -26,6 +26,18 @@
         .score-red { background-color: #fee2e2; color: #991b1b; font-weight: bold; }
         .score-pending { background-color: #f3f4f6; color: #4b5563; font-weight: bold; }
         .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; margin-left: auto; background: #1f2937; color: white; padding: 12px 20px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; z-index: 9999; pointer-events: none; max-width: 440px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+        /* Punto discreto de acceso docente: invisible como etiqueta, perceptible como detalle de interfaz. */
+        #teacherDot {
+            width: 18px; height: 18px; min-height: 18px !important; padding: 0; margin: 0;
+            border-radius: 9999px; border: 1px solid rgba(107,114,128,0.22);
+            background: rgba(107,114,128,0.09); box-shadow: none;
+            transition: background-color .2s ease, border-color .2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #teacherDot:hover, #teacherDot:focus-visible {
+            background: rgba(107,114,128,0.32); border-color: rgba(107,114,128,0.5);
+            outline: none;
+        }
         .missing-score { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
         .descriptor { min-height: 5.5rem; }
         .informe-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 9998; overflow-y: auto; padding: 20px; }
@@ -60,6 +72,25 @@
     </style>
 </head>
 <body class="text-gray-800">
+    <!-- Acceso discreto: punto en el margen inferior izquierdo. Debe vivir fuera del contenedor
+         principal porque .glass-panel usa backdrop-filter y eso rompe position: fixed. -->
+    <div id="teacherDock" class="fixed bottom-0 left-0 z-[60] p-2">
+        <button id="teacherDot" type="button" onclick="toggleTeacherAccess()" aria-label="Acceso"
+                aria-haspopup="dialog" aria-expanded="false"></button>
+        <div id="teacher-login" class="hidden absolute bottom-full left-0 mb-1 w-72 max-w-[calc(100vw-1rem)] p-4 bg-white rounded-lg border border-gray-300 shadow-2xl"
+             role="dialog" aria-labelledby="teacherLoginLabel"
+             onkeydown="if(event.key==='Escape'){closeTeacherLogin();}">
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <label id="teacherLoginLabel" for="passwordInput" class="block font-semibold text-gray-800">Clave docente</label>
+                <button type="button" onclick="closeTeacherLogin()" aria-label="Cerrar"
+                        class="text-gray-400 hover:text-gray-700 leading-none px-2 -mt-1">×</button>
+            </div>
+            <input type="password" id="passwordInput" autocomplete="current-password"
+                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                   onkeydown="if(event.key==='Enter'){authenticateTeacher();}">
+            <button onclick="authenticateTeacher()" class="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Ingresar</button>
+        </div>
+    </div>
     <div class="max-w-7xl mx-auto p-4 glass-panel shadow-2xl rounded-lg mt-6 mb-6 border border-gray-200">
         <header class="border-b-2 border-blue-800 pb-4 mb-4 flex justify-between items-center flex-wrap gap-4 bg-blue-50/50 p-4 rounded-t-lg">
             <div>
@@ -100,15 +131,6 @@
                         <span class="score-blue px-2 rounded">Azul: de 6 a 6,99</span>,
                         <span class="score-red px-2 rounded">Rojo: menos de 6</span>.
                     </p>
-                </div>
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <button onclick="toggleTeacherAccess()" class="text-gray-600 hover:text-blue-700 underline">Acceso docente y configuración</button>
-                <div id="teacher-login" class="hidden mt-3 p-4 bg-gray-50 rounded-md border inline-block">
-                    <label for="passwordInput" class="block font-medium text-gray-700">Clave docente</label>
-                    <input type="password" id="passwordInput" autocomplete="current-password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" onkeydown="if(event.key==='Enter'){authenticateTeacher();}">
-                    <button onclick="authenticateTeacher()" class="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Ingresar</button>
                 </div>
             </div>
 
@@ -622,17 +644,40 @@
             if (ci) ci.value = '';
             renderConsulta();
         }
-        function toggleTeacherAccess() { document.getElementById('teacher-login').classList.toggle('hidden'); }
+        function toggleTeacherAccess() {
+            const box = document.getElementById('teacher-login');
+            const dot = document.getElementById('teacherDot');
+            if (!box) return;
+            const willOpen = box.classList.contains('hidden');
+            box.classList.toggle('hidden', !willOpen);
+            if (dot) dot.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            if (willOpen) {
+                const inp = document.getElementById('passwordInput');
+                if (inp) { inp.value = ''; inp.focus(); }
+            }
+        }
+        function closeTeacherLogin() {
+            const box = document.getElementById('teacher-login');
+            if (box) box.classList.add('hidden');
+            const dot = document.getElementById('teacherDot');
+            if (dot) dot.setAttribute('aria-expanded', 'false');
+        }
         function authenticateTeacher() {
             if (document.getElementById('passwordInput').value === 'docente2026') {
+                closeTeacherLogin();
+                const dock = document.getElementById('teacherDock');
+                if (dock) dock.classList.add('hidden');
                 document.getElementById('teacher-panel').classList.remove('hidden');
                 document.getElementById('statsBar').classList.remove('hidden');
+                showTab(1);
                 renderLiveGrades();
                 renderAdminRecords();
                 updateStats();
                 renderTeamEditor();
                 renderDocenteRubrica();
                 renderCodigosPanel();
+                const panel = document.getElementById('teacher-panel');
+                if (panel && panel.scrollIntoView) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 showToast('Panel docente abierto.');
             } else { showToast('Clave incorrecta.'); }
         }
