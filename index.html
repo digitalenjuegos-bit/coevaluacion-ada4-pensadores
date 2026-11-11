@@ -28,12 +28,15 @@
         .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; margin-left: auto; background: #1f2937; color: white; padding: 12px 20px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; z-index: 9999; pointer-events: none; max-width: 440px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
         /* Punto discreto de acceso docente: invisible como etiqueta, perceptible como detalle de interfaz. */
         #teacherDot {
+            position: relative;
             width: 18px; height: 18px; min-height: 18px !important; padding: 0; margin: 0;
             border-radius: 9999px; border: 1px solid rgba(107,114,128,0.22);
             background: rgba(107,114,128,0.09); box-shadow: none;
             transition: background-color .2s ease, border-color .2s ease;
             -webkit-tap-highlight-color: transparent;
         }
+        /* Área táctil invisible de 42x42 px: el punto sigue viéndose de 18 px. */
+        #teacherDot::after { content: ''; position: absolute; inset: -12px; border-radius: 9999px; }
         #teacherDot:hover, #teacherDot:focus-visible {
             background: rgba(107,114,128,0.32); border-color: rgba(107,114,128,0.5);
             outline: none;
