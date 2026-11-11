@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADA 4 · Pensadores económicos: mercado y Estado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.4/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root { color-scheme: light; }
+        * { box-sizing: border-box; }
+        html { min-width: 320px; scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(160deg, #eef2ff 0%, #f8fafc 45%, #ecfeff 100%); min-height: 100vh; font-size: 16px; line-height: 1.6; }
+        button, input, select, textarea { font: inherit; font-size: 16px !important; }
+        button, select { min-height: 44px; }
+        button { cursor: pointer; }
+        button:disabled { cursor: not-allowed; }
+        .text-xs, .text-sm, .text-[10px], .text-[11px] { font-size: 16px !important; line-height: 1.5 !important; }
+        .glass-panel { background-color: rgba(255,255,255,0.97); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .score-green { background-color: #dcfce7; color: #166534; font-weight: bold; }
+        .score-blue { background-color: #dbeafe; color: #1e40af; font-weight: bold; }
+        .score-red { background-color: #fee2e2; color: #991b1b; font-weight: bold; }
+        .score-pending { background-color: #f3f4f6; color: #4b5563; font-weight: bold; }
+        .toast { position: fixed; bottom: 20px; right: 20px; left: 20px; margin-left: auto; background: #1f2937; color: white; padding: 12px 20px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; z-index: 9999; pointer-events: none; max-width: 440px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+        .missing-score { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .descriptor { min-height: 5.5rem; }
+        .informe-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); z-index: 9998; overflow-y: auto; padding: 20px; }
+        .informe-toolbar { position: sticky; top: 0; background: #ffffff; padding: 10px; border-radius: 8px; display: flex; gap: 10px; flex-wrap: wrap; margin: 0 auto 12px; max-width: 800px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .informe-print { background: #ffffff; max-width: 800px; margin: 0 auto; padding: 32px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .informe-print h2 { font-size: 22px; font-weight: bold; color: #1e3a8a; margin-bottom: 2px; }
+        .informe-print .sub { color: #4b5563; font-size: 16px; margin-bottom: 16px; }
+        .informe-print .stu { font-size: 16px; margin-bottom: 12px; }
+        .informe-print table { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
+        .informe-print td { border: 1px solid #d1d5db; padding: 6px 8px; }
+        .informe-print td.lbl { color: #374151; }
+        .informe-print td.val { font-weight: bold; text-align: right; }
+        .informe-print h3 { font-size: 18px; font-weight: bold; margin: 12px 0 6px; color: #1e3a8a; }
+        .informe-print .fb { font-size: 16px; line-height: 1.5; color: #374151; white-space: pre-wrap; }
+        .informe-print .pie { margin-top: 24px; font-size: 16px; color: #6b7280; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid #d97706; outline-offset: 3px; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        @media (max-width: 640px) {
+            .glass-panel { margin-top: 0 !important; margin-bottom: 0 !important; border-radius: 0 !important; padding: 12px !important; }
+            h1 { font-size: 25px !important; }
+            .informe-overlay { padding: 8px; }
+            .informe-print { padding: 16px; }
+            .toast { right: 12px; left: 12px; bottom: 12px; }
+        }
+        @media print {
+            body * { visibility: hidden !important; }
+            .informe-overlay { position: absolute !important; inset: auto !important; left: 0 !important; top: 0 !important; width: 100% !important; background: #ffffff !important; padding: 0 !important; overflow: visible !important; }
+            .informe-toolbar { display: none !important; }
+            .informe-print, .informe-print * { visibility: visible !important; }
+            .informe-print { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="max-w-7xl mx-auto p-4 glass-panel shadow-2xl rounded-lg mt-6 mb-6 border border-gray-200">
+        <header class="border-b-2 border-blue-800 pb-4 mb-4 flex justify-between items-center flex-wrap gap-4 bg-blue-50/50 p-4 rounded-t-lg">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-900">ADA 4 · Pensadores económicos: mercado y Estado</h1>
+                <p class="text-lg text-gray-700 font-semibold">Autoevaluación y evaluación individual del guion escrito</p>
+            </div>
+            <div id="statsBar" class="hidden text-right bg-white p-3 rounded-lg border border-blue-200 shadow-sm">
+                <span class="font-bold text-blue-800" id="statEvals">0 autoevaluaciones</span><br>
+                <span id="statDocentes">0 evaluaciones docentes</span><br>
+                <span id="statFinales">0 notas finales completas</span>
+            </div>
+        </header>
+
+        <nav aria-label="Secciones de la actividad" class="flex border-b mb-4 flex-wrap gap-2">
+            <button onclick="showTab(1)" class="px-4 py-2 bg-blue-600 text-white rounded-t-md tab-btn active" id="tab1-btn">Introducción</button>
+            <button onclick="showTab(2)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-t-md tab-btn" id="tab2-btn">Mi autoevaluación</button>
+            <button onclick="showTab(3)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-t-md tab-btn" id="tab3-btn">Mi informe</button>
+        </nav>
+
+        <section id="tab1" class="tab-content active" aria-labelledby="tab1-btn">
+            <div class="prose max-w-none">
+                <h2 class="text-2xl font-semibold text-blue-800">¿Quién debe decidir cómo se reparte lo que producimos?</h2>
+                <p class="italic text-gray-600">El mercado, el Estado o una combinación de ambos.</p>
+                <p>En esta actividad investigaste a un pensador económico, elaboraste un guion escrito de cuatro escenas, formulaste réplicas a una corriente rival y aplicaste sus ideas a un problema actual del Ecuador. La evaluación considera el guion y los documentos del proceso.</p>
+                <p>En la pestaña <b>Mi autoevaluación</b> revisarás los descriptores, registrarás tu propia nota sobre diez y explicarás con una breve reflexión por qué la asignas. Si necesitas corregirla, vuelve a entrar con el mismo paralelo y nombre: el nuevo envío reemplazará tu registro anterior.</p>
+
+                <div class="bg-blue-50 p-4 rounded-md border border-blue-200 mt-4">
+                    <h3 class="text-xl font-semibold text-blue-800">Cómo se obtiene la nota final</h3>
+                    <p class="bg-white p-3 rounded mt-2 text-center text-lg"><b>Nota final = 70 % nota docente + 30 % autoevaluación</b></p>
+                    <ul class="list-disc pl-6 mt-2">
+                        <li>La evaluación docente pesa setenta por ciento y la autoevaluación, treinta por ciento.</li>
+                        <li>La nota final permanece pendiente hasta que existan las dos calificaciones.</li>
+                        <li>Los cuatro criterios docentes se puntúan de cero a diez y se promedian con igual ponderación.</li>
+                        <li>Tu autoevaluación es la nota que escribes personalmente; no se calcula a partir de los descriptores que marques como apoyo.</li>
+                    </ul>
+                    <p class="mt-3"><b>Colores de la nota final:</b>
+                        <span class="score-green px-2 rounded">Verde: 7 o más</span>,
+                        <span class="score-blue px-2 rounded">Azul: de 6 a 6,99</span>,
+                        <span class="score-red px-2 rounded">Rojo: menos de 6</span>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <button onclick="toggleTeacherAccess()" class="text-gray-600 hover:text-blue-700 underline">Acceso docente y configuración</button>
+                <div id="teacher-login" class="hidden mt-3 p-4 bg-gray-50 rounded-md border inline-block">
+                    <label for="passwordInput" class="block font-medium text-gray-700">Clave docente</label>
+                    <input type="password" id="passwordInput" autocomplete="current-password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" onkeydown="if(event.key==='Enter'){authenticateTeacher();}">
+                    <button onclick="authenticateTeacher()" class="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Ingresar</button>
+                </div>
+            </div>
+
+            <section id="teacher-panel" class="hidden mt-8 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg" aria-label="Panel docente">
+                <h2 class="text-2xl font-bold text-blue-900 mb-3">Panel de administración docente</h2>
+                <p class="mb-3 p-3 bg-white rounded border border-blue-200">El guion se entrega en <b>Hyperclass</b>. Esta aplicación registra las evaluaciones y las notas; no almacena el documento ni archivos adjuntos.</p>
+                <p class="mb-4">La fórmula es fija: <b>nota final = 70 % nota docente + 30 % autoevaluación</b>. La nota queda pendiente si falta alguno de los dos componentes.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-white rounded border">
+                        <h3 class="font-semibold mb-2">1. Apertura de autoevaluaciones</h3>
+                        <p class="mb-3">El estado se guarda en la nube y se aplica a todos los dispositivos.</p>
+                        <button id="toggleEvaluationsBtn" onclick="toggleEvaluations()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 shadow-sm">Autoevaluaciones abiertas</button>
+                        <p id="lockCloudStatus" class="mt-2 text-gray-600" role="status"></p>
+                    </div>
+                    <div class="p-4 bg-white rounded border">
+                        <h3 class="font-semibold mb-2">2. Escala y nota final</h3>
+                        <p>Cada criterio docente vale de 0 a 10. La nota docente es su promedio, con dos decimales.</p>
+                        <p class="mt-2">La nota final combina la nota docente con un peso de setenta por ciento y la autoevaluación con un peso de treinta por ciento.</p>
+                    </div>
+                </div>
+
+                <section class="mb-6 p-4 bg-white rounded border" aria-labelledby="teams-heading">
+                    <h3 id="teams-heading" class="font-semibold mb-2">3. Organización de equipos</h3>
+                    <p class="mb-3">Los equipos solo ayudan a ordenar el trabajo. Las tres notas del informe son individuales y no se replican entre integrantes.</p>
+                    <div class="flex flex-wrap gap-4 items-end mb-4">
+                        <div>
+                            <label for="teamParalelo" class="block font-medium">Paralelo</label>
+                            <select id="teamParalelo" onchange="handleTeamParallelChange()" class="border rounded px-3 py-2 bg-white"></select>
+                        </div>
+                        <div>
+                            <label for="numTeams" class="block font-medium">Número de equipos (1 a 12)</label>
+                            <input type="number" id="numTeams" min="1" max="12" value="5" class="w-32 px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label for="numMembers" class="block font-medium">Máximo de integrantes</label>
+                            <input type="number" id="numMembers" min="1" max="8" value="5" class="w-32 px-3 py-2 border rounded">
+                        </div>
+                        <button onclick="editorGenerateTeams()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generar estructura</button>
+                        <button onclick="editorRandomAssign()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Asignación aleatoria</button>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <h4 class="font-bold mb-2 bg-gray-100 p-2 rounded">Estudiantes sin equipo (<span id="unassignedCount">0</span>)</h4>
+                            <div id="unassignedList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded border"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2 bg-blue-100 p-2 rounded">Equipos del curso</h4>
+                            <div id="teamBuilder" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-96 overflow-y-auto p-2 bg-gray-50 rounded border"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 items-center border-t pt-3">
+                        <button onclick="saveTeamsToCloud()" class="bg-green-700 text-white px-5 py-2 rounded font-bold hover:bg-green-800">Guardar equipos en la nube</button>
+                        <button onclick="resetTeamsToDefault(this)" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Restaurar equipos originales</button>
+                        <span id="teamsCloudStatus" class="text-gray-600" role="status"></span>
+                    </div>
+                </section>
+
+                <section class="mb-6 p-4 bg-white rounded border" aria-labelledby="rubric-heading">
+                    <h3 id="rubric-heading" class="font-semibold mb-2">4. Evaluación docente individual</h3>
+                    <p class="mb-3">Selecciona un paralelo y un estudiante. Escribe una puntuación de 0 a 10 para cada criterio; el descriptor cambia según el nivel alcanzado.</p>
+                    <div id="docenteRubricaArea"></div>
+                </section>
+
+                <section class="mb-6 p-4 bg-white rounded border" aria-labelledby="codes-heading">
+                    <h3 id="codes-heading" class="font-semibold mb-2">5. Códigos de acceso al informe</h3>
+                    <p class="mb-3">Cada estudiante consulta su informe con su nombre y código personal. El código permite una vista; puedes restablecerla si hubo un problema técnico.</p>
+                    <div class="flex flex-wrap gap-3 items-center mb-3">
+                        <button onclick="ensureCodigos()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generar códigos faltantes</button>
+                        <button onclick="resetAllViews(this)" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Restablecer todas las vistas</button>
+                        <span id="codigosStatus" class="text-gray-600" role="status"></span>
+                    </div>
+                    <div id="codigosPanel" class="table-wrap">
+                        <p class="text-gray-500 p-2 text-center">Códigos pendientes de generar.</p>
+                    </div>
+                </section>
+
+                <section class="mb-6 p-4 bg-white rounded border" aria-labelledby="summary-heading">
+                    <div class="flex flex-wrap justify-between items-center mb-3 gap-3">
+                        <h3 id="summary-heading" class="font-semibold">6. Resumen individual en vivo</h3>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="exportToXlsx()" class="bg-emerald-700 text-white px-4 py-2 rounded font-bold hover:bg-emerald-800">Descargar Excel (.xlsx)</button>
+                            <button onclick="exportToCSV()" class="bg-green-700 text-white px-4 py-2 rounded font-bold hover:bg-green-800">Descargar CSV</button>
+                            <button onclick="exportToPDF()" class="bg-blue-700 text-white px-4 py-2 rounded font-bold hover:bg-blue-800">Descargar PDF</button>
+                        </div>
+                    </div>
+                    <div id="participationCounter" class="inline-block font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded px-3 py-2 mb-3">Participación: cargando...</div>
+                    <p class="mb-3">Cada fila corresponde a un estudiante. Las columnas de autoevaluación, nota docente y nota final son valores distintos. La nota final solo aparece cuando las otras dos están registradas.</p>
+                    <div class="table-wrap mb-4">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-blue-100 text-blue-800">
+                                    <th class="border p-2 text-left">Paralelo</th>
+                                    <th class="border p-2 text-left">Estudiante</th>
+                                    <th class="border p-2 text-left">Equipo</th>
+                                    <th class="border p-2 text-center">Autoevaluación</th>
+                                    <th class="border p-2 text-center">Nota docente</th>
+                                    <th class="border p-2 text-center">Nota final</th>
+                                    <th class="border p-2 text-left" style="min-width:300px">Retroalimentación automática</th>
+                                    <th class="border p-2 text-left" style="min-width:260px">Comentario docente</th>
+                                </tr>
+                            </thead>
+                            <tbody id="liveGradesBody">
+                                <tr><td colspan="8" class="border p-3 text-center text-gray-500">Conectando a la nube...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4 class="font-bold text-gray-700 mt-4 mb-2">Registros individuales</h4>
+                    <p class="mb-2">Las acciones de borrado requieren dos clics y solo afectan el registro seleccionado.</p>
+                    <div id="adminRecordsList" class="space-y-2 max-h-96 overflow-y-auto p-2 border rounded bg-gray-50">
+                        <p class="text-gray-500 p-2 text-center">No hay registros.</p>
+                    </div>
+                </section>
+            </section>
+        </section>
+
+        <section id="tab2" class="tab-content" aria-labelledby="tab2-btn">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-3">Mi autoevaluación individual</h2>
+            <p class="mb-4">Revisa los descriptores, elige los niveles que uses como apoyo, escribe tu nota personal sobre diez y justifica tu decisión. La nota que escribes es la que se guarda.</p>
+            <div id="autoLockBanner" class="hidden mb-4 p-4 bg-red-50 border border-red-300 rounded text-red-800 font-bold" role="status"></div>
+            <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="studentParalelo" class="block font-bold text-gray-700">Paso 1: selecciona tu paralelo</label>
+                    <select id="studentParalelo" onchange="handleAutoParallelChange()" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white"></select>
+                </div>
+                <div>
+                    <label for="autoStudent" class="block font-bold text-gray-700">Paso 2: selecciona tu nombre</label>
+                    <select id="autoStudent" onchange="handleAutoStudentChange()" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white">
+                        <option value="">Seleccione su nombre...</option>
+                    </select>
+                </div>
+            </div>
+            <div id="autoGuide" class="mb-5"></div>
+            <div id="autoEvaluationArea"></div>
+        </section>
+
+        <section id="tab3" class="tab-content" aria-labelledby="tab3-btn">
+            <h2 class="text-2xl font-semibold text-blue-800 mb-4">Mi informe individual</h2>
+            <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="consultaParalelo" class="block font-bold text-gray-700">Tu paralelo</label>
+                        <select id="consultaParalelo" onchange="handleConsultaParallelChange()" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white"></select>
+                    </div>
+                    <div>
+                        <label for="consultaEvaluador" class="block font-bold text-gray-700">Tu nombre</label>
+                        <select id="consultaEvaluador" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white">
+                            <option value="">Seleccione su nombre...</option>
+                        </select>
+                    </div>
+                </div>
+                <label for="codigoInput" class="block font-bold text-gray-700 mt-4">Tu código personal</label>
+                <input id="codigoInput" type="text" autocomplete="off" maxlength="6" placeholder="Escribe tu código" class="mt-1 block w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white font-mono tracking-widest uppercase" onkeydown="if(event.key==='Enter'){verMiInforme();}">
+                <button onclick="verMiInforme()" id="verInformeBtn" class="mt-4 bg-blue-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-800 shadow-sm">Ver mi informe</button>
+                <p class="mt-3 text-gray-600">Tu docente te entrega este código. Es personal, permite una sola vista y no debes compartirlo.</p>
+            </div>
+            <div id="consultaArea" class="mt-4">
+                <p class="text-gray-600">Elige tu paralelo y nombre, escribe tu código personal y presiona Ver mi informe.</p>
+            </div>
+        </section>
+
+        <footer class="mt-10 pt-6 border-t border-gray-200 text-center text-gray-600">
+            <p>2026 Mr. Alberto Ottati R. · Logos Academy · ADA 4, Pensadores económicos: mercado y Estado.</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script>
+        "use strict";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-iRwZ9AUya0F7tkU4uQUWE7eJbgeFZwM",
+            authDomain: "coevaluacionhistoria.firebaseapp.com",
+            databaseURL: "https://coevaluacionhistoria-default-rtdb.firebaseio.com",
+            projectId: "coevaluacionhistoria",
+            storageBucket: "coevaluacionhistoria.firebasestorage.app",
+            messagingSenderId: "878859292504",
+            appId: "1:878859292504:web:94a313961d347d1d5cdf2d"
+        };
+        const ACT = 'guion_pensadores_ada4';
+        const AUTO_NODE = 'autoevaluaciones_' + ACT;
+        const DOCENTE_NODE = 'docente_' + ACT;
+        const CONFIG_NODE = 'config_' + ACT;
+        const LOCK_NODE = CONFIG_NODE + '/evaluationsActive';
+        const CODES_NODE = 'codigos_' + ACT;
+        const VIEWS_NODE = 'notas_vistas_' + ACT;
+        const TEAMS_NODE = 'equipos_' + ACT;
+
+        // Ponderación de la nota final: 70 % evaluación docente, 30 % autoevaluación.
+        const PESO_DOCENTE = 0.7;
+        const PESO_AUTO = 0.3;
+
+        let db = null;
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+            } else { console.error('Firebase SDK no cargó.'); }
+        } catch (e) { console.error('Error inicializando Firebase:', e); }
+
+
+        const DOC_RUBRIC = [
+            {
+                key: 'c1', title: 'Pensador, contexto e ideas económicas',
+                short: 'la explicación del pensador y de sus ideas',
+                tip: 'precisar su época, sus ideas centrales y su postura frente al mercado y al Estado con terminología económica',
+                auto: 'Expliqué el personaje, su época y contexto, sus ideas centrales y su postura frente al mercado y al Estado con terminología económica precisa.',
+                levels: [
+                    { min: 9, max: 10, label: 'Excelente', text: 'Explica con precisión al personaje, su época y contexto, sus ideas centrales y su postura frente al mercado y al Estado. Usa terminología económica pertinente y exacta durante todo el guion.' },
+                    { min: 7, max: 8.99, label: 'Bueno', text: 'Explica al personaje, su contexto y sus ideas principales con una postura clara. Presenta algunas omisiones o imprecisiones terminológicas que no impiden comprender su argumento.' },
+                    { min: 5, max: 6.99, label: 'En proceso', text: 'Presenta información parcial del pensador y de su contexto. Sus ideas o su postura frente al mercado y al Estado necesitan mayor explicación y precisión económica.' },
+                    { min: 1, max: 4.99, label: 'Inicial', text: 'Menciona al pensador, pero ofrece una explicación muy limitada de su contexto, sus ideas o su postura. La terminología es escasa o se usa de manera incorrecta.' },
+                    { min: 0, max: 0, label: 'Sin evidencia', text: 'No hay evidencia suficiente para valorar la explicación del pensador, su contexto, sus ideas o su postura económica.' }
+                ]
+            },
+            {
+                key: 'c2', title: 'Investigación, fuentes y documentos del proceso',
+                short: 'la investigación y la documentación del proceso',
+                tip: 'contrastar fuentes confiables y variadas, citarlas con corrección y conservar documentos de sesión y una autoevaluación reflexiva',
+                auto: 'Investigué con fuentes confiables y variadas, las cité correctamente y evalué mi proceso en los documentos de sesión y en esta autoevaluación.',
+                levels: [
+                    { min: 9, max: 10, label: 'Excelente', text: 'Investiga con fuentes confiables y variadas, las cita correctamente y documenta con claridad el trabajo de las sesiones. La autoevaluación examina decisiones, avances y aspectos por mejorar.' },
+                    { min: 7, max: 8.99, label: 'Bueno', text: 'Utiliza fuentes confiables y aporta citas y documentos del proceso. Hay algunas omisiones en la variedad de fuentes, el formato de las citas o la profundidad de la autoevaluación.' },
+                    { min: 5, max: 6.99, label: 'En proceso', text: 'Presenta algunas fuentes y documentos del proceso, pero la investigación es limitada, las citas son incompletas o la autoevaluación apenas describe el trabajo realizado.' },
+                    { min: 1, max: 4.99, label: 'Inicial', text: 'Aporta pocas fuentes o documentos, con citas insuficientes y una autoevaluación superficial. No se puede reconstruir con claridad el proceso de investigación.' },
+                    { min: 0, max: 0, label: 'Sin evidencia', text: 'No presenta fuentes, citas ni documentos suficientes para valorar la investigación o la reflexión sobre el proceso.' }
+                ]
+            },
+            {
+                key: 'c3', title: 'Comunicación escrita en el guion de cuatro escenas',
+                short: 'la organización y claridad del guion escrito',
+                tip: 'revisar la secuencia de las cuatro escenas, la caracterización escrita de las voces y la comprensión de argumentos y réplicas',
+                auto: 'Comuniqué mis ideas en un guion de cuatro escenas, con voces escritas creíbles, argumentos y réplicas comprensibles y participación documentada del equipo cuando correspondió.',
+                levels: [
+                    { min: 9, max: 10, label: 'Excelente', text: 'El guion desarrolla cuatro escenas bien estructuradas. Las voces y la caracterización escrita resultan creíbles, los argumentos y réplicas se comprenden con facilidad y la participación del equipo queda documentada cuando corresponde.' },
+                    { min: 7, max: 8.99, label: 'Bueno', text: 'El guion contiene cuatro escenas reconocibles y una secuencia clara. Las voces, los argumentos y las réplicas son comprensibles, aunque alguna escena o la documentación de la participación necesita mayor desarrollo.' },
+                    { min: 5, max: 6.99, label: 'En proceso', text: 'El guion tiene una estructura parcial o escenas desiguales. Algunas voces, argumentos o réplicas necesitan claridad, continuidad o una caracterización escrita más consistente.' },
+                    { min: 1, max: 4.99, label: 'Inicial', text: 'El texto no logra organizar con claridad las cuatro escenas. Las voces se confunden, los argumentos y réplicas son difíciles de seguir o la participación documentada es insuficiente.' },
+                    { min: 0, max: 0, label: 'Sin evidencia', text: 'No hay un guion escrito suficiente para valorar la estructura de cuatro escenas, las voces, los argumentos o las réplicas.' }
+                ]
+            },
+            {
+                key: 'c4', title: 'Evaluación de la corriente y aplicación al Ecuador',
+                short: 'la evaluación de la corriente y su aplicación al Ecuador',
+                tip: 'responder a los argumentos rivales y aplicar la corriente a un caso ecuatoriano reconociendo tanto su valor como sus limitaciones',
+                auto: 'Evalué la solidez de mi corriente frente a la rival y apliqué sus ideas al caso ecuatoriano, reconociendo su valor y sus limitaciones.',
+                levels: [
+                    { min: 9, max: 10, label: 'Excelente', text: 'Evalúa con solidez la corriente frente a los argumentos rivales y la aplica de manera pertinente a un problema actual del Ecuador. Reconoce explícitamente aportes, límites y condiciones de aplicación.' },
+                    { min: 7, max: 8.99, label: 'Bueno', text: 'Compara la corriente con la rival y la aplica al caso ecuatoriano con argumentos pertinentes. Reconoce valores y limitaciones, aunque alguno requiere mayor fundamentación.' },
+                    { min: 5, max: 6.99, label: 'En proceso', text: 'Presenta una comparación o aplicación parcial. Las respuestas a la corriente rival o la valoración de límites en el caso ecuatoriano necesitan mayor desarrollo.' },
+                    { min: 1, max: 4.99, label: 'Inicial', text: 'Apenas contrasta las corrientes o menciona el caso ecuatoriano sin aplicar las ideas con claridad. No reconoce de manera suficiente valores y limitaciones.' },
+                    { min: 0, max: 0, label: 'Sin evidencia', text: 'No hay evidencia suficiente de comparación con la corriente rival ni de aplicación y evaluación en el caso ecuatoriano.' }
+                ]
+            }
+        ];
+        const AUTO_LEVELS = ['Excelente', 'Bueno', 'En proceso', 'Inicial', 'Sin evidencia'];
+        // --- NÓMINAS OFICIALES 1BGU 2026-2027 (Listas_por_curso_2026-2027 + Historia 1° Bachillerato, corte 25-sep-2026) ---
+        const ROSTERS = {
+            '1BGU A': [
+                'ALBAN ALTAMIRANO IVANNA FERNANDA',
+                'ARTEAGA PLAZA MARIA EMILIA',
+                'BEJAR JIMENEZ HELENA VICTORIA',
+                'CADENA RUIZ ABIGAIL',
+                'CARDENAS ASTUDILLO JUAN ALEJANDRO',
+                'CARRILLO PEREZ MIGUEL ADRIAN',
+                'CASTILLO RAMIREZ MARCO ANTONIO',
+                'CHONG QUI PEÑAFIEL MARIA EMILIA',
+                'DEL SALTO PALACIOS MA. DEL MAR',
+                'DIAZ VELIZ EDUARDO ANTONIO',
+                'ESTRADA VERA ARIANA ISABEL',
+                'FARFAN LEÓN LUCIANA SOFÍA',
+                'FERNANDEZ GONZABAY AMANDA ANNABELLA',
+                'FIALLOS CONSTANTE BRUNO GABRIEL',
+                'GALEFSKI MERINO ALANIS BELEN',
+                'GARATE ANDRADE MANUEL ISAIAS',
+                'LEON HIDALGO JORGE ENRIQUE',
+                'MEDINA GOMEZ NICOLAS MARTIN',
+                'MEDINA MOREJON FABIANNA NICOLE',
+                'MOHR MOSCOL LUCAS AGUSTIN',
+                'MONCADA TAPIA PEDRO ARTURO',
+                'MONTIEL CEDEÑO RUTH PAULETTE',
+                'NAVIA ALCIVAR MIGUEL IVAN',
+                'SALAZAR CAMPUZANO THELMO SAMUEL',
+                'VARGAS CARVAJAL MATIAS ADRIAN'
+            ],
+            '1BGU B': [
+                'CARDENAS VASQUEZ VALENTINA RAPHAELA',
+                'DARQUEA GUERRERO ISABELLA',
+                'DVORQUEZ SAMAN EITAN',
+                'ENCALADA ZAMBRANO PATRICK OLIVIER',
+                'FLORES SANCHEZ VALENTINA',
+                'GARCÉS CABEZAS DOMÉNICA ISABELLA',
+                'GONZALEZ LOPEZ ISABELLA ALEJANDRA',
+                'GONZALEZ VELASCO ESTEFANÍA',
+                'HIDALGO DROUET SAMANTHA',
+                'HOYOS ESPIN AMANDA LIA',
+                'LABRE GALARZA RAFAELLA',
+                'MOSCOSO MARTINEZ ALICIA MARIA',
+                'MUECKAY SALVATIERRA LUCAS XAVIER',
+                'NAHT MUÑOZ DOMENICA ANTONELLA',
+                'NARANJO OJEDA MAIHA',
+                'ORTIZ CABRERA DYLAN ANTONIO',
+                'RODRIGUEZ RUIZ DANNA VALERIA',
+                'SANTA CRUZ CERÓN MATTÍAS NICCOLO',
+                'SOLORZANO REYES SEBASTIAN',
+                'TAPIA GARZON ANDRES JESUS',
+                'VALLEJO HERDOIZA NICOLÁS ANDRES',
+                'WENDT LANDIVAR NATHALIE FABIANA',
+                'ZAMBRANO MOREIRA MARIA VICTORIA',
+                'ZAPATIER PEREZ LEONARDO'
+            ],
+            '1BGU C': [
+                'ALAVA PONCE ISABELLA EDITH',
+                'ALVARADO CASTRO RICARDO EDISON',
+                'BONILLA CHAVARRIA JUAN DIEGO',
+                'CELLERI RAMIREZ FELIPE ALEJANDRO',
+                'CHACON REYES BELEN ALEJANDRA',
+                'CRUZ PINEDA DOMENICA ALEJANDRA',
+                'DE LA CUADRA GARCES EILEEN ALBA',
+                'ENCALADA ZAMBRANO SURI POLETTE',
+                'GARCIA VELEZ GRACE VALENTINA',
+                'GAVILANES MENDEZ WILSON ADRIAN',
+                'GILER CAÑARTE LUCCIANA ISABELLE',
+                'MARTINEZ VELASQUEZ WLADIMIR ALEJANDRO',
+                'MORALES FLORES EMILIO ALEJANDRO',
+                'OLIVEIRA YEPEZ ELIANE ANNELIESE',
+                'PALACIOS RECALDE EDUARDO ANDRES',
+                'QUIMI CEDILLO KRYSTELL LISSET',
+                'REINA SANCHEZ NISHMA VALENTINA',
+                'RIVADENEIRA LUZARDO AMANDA LUCIA',
+                'RIVERA TINOCO ALEXA MARIA',
+                'TOLEDO CASTILLO ROBERTO SEBASTIAN',
+                'VÉLEZ ZAMBRANO SAMUEL ENRIQUE',
+                'VERA GILER DARMIN MATIAS',
+                'YCAZA MONTJOY RICARDO XAVIER'
+            ]
+        };
+        const PARALELOS = Object.keys(ROSTERS);
+        // Ocho equipos por paralelo, uno por corriente económica (guía ADA 4); el docente asigna integrantes y puede editar temas en la app.
+        const CORRIENTES_ADA4 = [
+            'Clásica: Adam Smith y la mano invisible',
+            'Marginalismo',
+            'Ley de Say',
+            'Marxismo: teoría del valor de Karl Marx',
+            'Keynesianismo',
+            'Monetarismo',
+            'Economía conductual',
+            'Economía circular'
+        ];
+        function defaultTeamsAda4() {
+            return CORRIENTES_ADA4.map(function (topic, i) {
+                return { id: 'G' + (i + 1), topic: topic, members: [], maxMembers: 4 };
+            });
+        }
+        const DEFAULT_TEAMS_BY_PARALLEL = {};
+        PARALELOS.forEach(function (p) { DEFAULT_TEAMS_BY_PARALLEL[p] = defaultTeamsAda4(); });
+
+        let teams = JSON.parse(JSON.stringify(DEFAULT_TEAMS_BY_PARALLEL[PARALELOS[0]] || []));
+        let teamsCloud = {};
+        let evaluationsActive = true;
+        let autoRecords = {};
+        let docenteRecords = {};
+        let codigos = {};
+        let vistas = {};
+        let codigosLoaded = false;
+        let ensureCodigosBusy = false;
+        let consultaUnlockedStudent = null;
+        let consultaUnlockedParallel = null;
+        let consultaIdleTimer = null;
+        let informeActual = null;
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (!t) return;
+            if (toastTimer) clearTimeout(toastTimer);
+            t.textContent = msg;
+            t.style.opacity = 1;
+            toastTimer = setTimeout(() => { t.style.opacity = 0; }, 3600);
+        }
+        function safeKey(str) { return str ? String(str).replace(/[.#$/\[\]]/g, '').replace(/[^a-zA-Z0-9]/g, '_') : ''; }
+        function shortName(n) { return n ? String(n).trim() : ''; }
+        function escapeHtml(v) { return String(v === null || v === undefined ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+        function teamNum(teamId) { const m = String(teamId || '').match(/\d+/); return m ? m[0] : teamId; }
+        function groupLabel(id) { return 'Equipo ' + teamNum(id); }
+        function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null; }
+        function round2(v) { return Math.round((v + Number.EPSILON) * 100) / 100; }
+        function fmt2(v) { return Number(v).toFixed(2); }
+        function notaValida(v) { return typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 10; }
+        function calcNotaFinal(notaDocente, autoevaluacion) {
+            if (!notaValida(notaDocente) || !notaValida(autoevaluacion)) return null;
+            return round2(notaDocente * PESO_DOCENTE + autoevaluacion * PESO_AUTO);
+        }
+        function scoreClass(v) {
+            if (!notaValida(v)) return 'score-pending';
+            if (v >= 7) return 'score-green';
+            if (v >= 6) return 'score-blue';
+            return 'score-red';
+        }
+        function levelForScore(v) {
+            if (!notaValida(v)) return null;
+            if (v >= 9) return 0;
+            if (v >= 7) return 1;
+            if (v >= 5) return 2;
+            if (v >= 1) return 3;
+            return 4;
+        }
+        function recordsFor(dataset, paralelo) { return dataset[safeKey(paralelo)] || {}; }
+        function getAuto(student, paralelo) { return recordsFor(autoRecords, paralelo)[safeKey(student)] || null; }
+        function getDocente(student, paralelo) { return recordsFor(docenteRecords, paralelo)[safeKey(student)] || null; }
+        function findGroupOf(student, paralelo) {
+            const source = teamsCloud[safeKey(paralelo)] && Array.isArray(teamsCloud[safeKey(paralelo)].teams)
+                ? teamsCloud[safeKey(paralelo)].teams : DEFAULT_TEAMS_BY_PARALLEL[paralelo] || [];
+            return source.find(t => Array.isArray(t.members) && t.members.includes(student)) || null;
+        }
+        function orderedRoster(paralelo) {
+            const out = [];
+            const groupData = findGroupsForParallel(paralelo);
+            groupData.forEach(t => (t.members || []).forEach(m => { if (!out.includes(m)) out.push(m); }));
+            (ROSTERS[paralelo] || []).forEach(m => { if (!out.includes(m)) out.push(m); });
+            return out;
+        }
+        function findGroupsForParallel(paralelo) {
+            const cloud = teamsCloud[safeKey(paralelo)];
+            if (cloud && Array.isArray(cloud.teams)) return cloud.teams;
+            return DEFAULT_TEAMS_BY_PARALLEL[paralelo] || [];
+        }
+
+
+        window.onload = function() {
+            populateParallelSelectors();
+            renderAutoGuide();
+            handleAutoParallelChange();
+            handleConsultaParallelChange();
+            handleTeamParallelChange();
+            renderDocenteRubrica();
+            if (!db) {
+                evaluationsActive = true;
+                updateLockUI('No se pudo conectar con la nube. La autoevaluación permanece abierta, pero el guardado requiere conexión.');
+                return;
+            }
+            db.ref(LOCK_NODE).on('value', snap => {
+                const v = snap.val();
+                evaluationsActive = v !== false;
+                updateLockUI('');
+            }, () => {
+                evaluationsActive = true;
+                updateLockUI('No se pudo comprobar el estado de apertura. Se mantiene abierta por precaución.');
+            });
+            db.ref(AUTO_NODE).on('value', snap => {
+                autoRecords = snap.val() || {};
+                renderAutoEvaluation();
+                renderLiveGrades();
+                renderAdminRecords();
+                updateStats();
+                renderConsulta();
+            }, () => showToast('No se pudieron actualizar las autoevaluaciones.'));
+            db.ref(DOCENTE_NODE).on('value', snap => {
+                docenteRecords = snap.val() || {};
+                renderDocenteRubrica();
+                renderLiveGrades();
+                renderAdminRecords();
+                updateStats();
+                renderConsulta();
+            }, () => showToast('No se pudieron actualizar las evaluaciones docentes.'));
+            db.ref(CODES_NODE).on('value', snap => {
+                codigos = snap.val() || {};
+                codigosLoaded = true;
+                renderCodigosPanel();
+            }, () => showToast('No se pudieron actualizar los códigos.'));
+            db.ref(VIEWS_NODE).on('value', snap => {
+                vistas = snap.val() || {};
+                renderCodigosPanel();
+            }, () => showToast('No se pudieron actualizar las vistas.'));
+            db.ref(TEAMS_NODE).on('value', snap => {
+                teamsCloud = snap.val() || {};
+                const selected = document.getElementById('teamParalelo');
+                applyTeamsForParallel(selected ? selected.value : PARALELOS[0]);
+                renderLiveGrades();
+            }, () => showToast('No se pudieron actualizar los equipos.'));
+        };
+
+        function showTab(i) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'bg-blue-600', 'text-white');
+                el.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            document.getElementById('tab' + i).classList.add('active');
+            const btn = document.getElementById('tab' + i + '-btn');
+            btn.classList.add('active', 'bg-blue-600', 'text-white');
+            btn.classList.remove('bg-gray-200', 'text-gray-700');
+            if (i === 2) renderAutoEvaluation();
+            if (i === 3) renderConsulta(); else resetConsultaState();
+        }
+
+        function armConsultaIdleLock() {
+            if (consultaIdleTimer) clearTimeout(consultaIdleTimer);
+            consultaIdleTimer = setTimeout(function () {
+                if (consultaUnlockedStudent) {
+                    resetConsultaState();
+                    showToast('El informe se cerró por inactividad.');
+                }
+            }, 15 * 60 * 1000);
+        }
+        function resetConsultaState() {
+            if (consultaIdleTimer) { clearTimeout(consultaIdleTimer); consultaIdleTimer = null; }
+            consultaUnlockedStudent = null;
+            consultaUnlockedParallel = null;
+            const ci = document.getElementById('codigoInput');
+            if (ci) ci.value = '';
+            renderConsulta();
+        }
+        function toggleTeacherAccess() { document.getElementById('teacher-login').classList.toggle('hidden'); }
+        function authenticateTeacher() {
+            if (document.getElementById('passwordInput').value === 'docente2026') {
+                document.getElementById('teacher-panel').classList.remove('hidden');
+                document.getElementById('statsBar').classList.remove('hidden');
+                renderLiveGrades();
+                renderAdminRecords();
+                updateStats();
+                renderTeamEditor();
+                renderDocenteRubrica();
+                renderCodigosPanel();
+                showToast('Panel docente abierto.');
+            } else { showToast('Clave incorrecta.'); }
+        }
+
+        async function toggleEvaluations() {
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            const next = !evaluationsActive;
+            const btn = document.getElementById('toggleEvaluationsBtn');
+            try {
+                if (btn) btn.disabled = true;
+                await db.ref(LOCK_NODE).set(next);
+                showToast(next ? 'Autoevaluaciones abiertas en todos los dispositivos.' : 'Autoevaluaciones cerradas en todos los dispositivos.');
+            } catch (e) { showToast('No se pudo cambiar el estado: ' + e.message); }
+            finally { if (btn) btn.disabled = false; }
+        }
+        function updateLockUI(message) {
+            const btn = document.getElementById('toggleEvaluationsBtn');
+            if (btn) {
+                btn.textContent = evaluationsActive ? 'Autoevaluaciones abiertas' : 'Autoevaluaciones cerradas';
+                btn.className = evaluationsActive
+                    ? 'bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 shadow-sm'
+                    : 'bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 shadow-sm';
+                btn.setAttribute('aria-pressed', evaluationsActive ? 'true' : 'false');
+            }
+            const banner = document.getElementById('autoLockBanner');
+            if (banner) {
+                banner.classList.toggle('hidden', evaluationsActive);
+                banner.textContent = evaluationsActive ? '' : 'La autoevaluación está cerrada. El docente debe abrirla para que puedas guardar o corregir tu registro.';
+            }
+            const status = document.getElementById('lockCloudStatus');
+            if (status) status.textContent = message || (evaluationsActive ? 'Estado actual: abierta.' : 'Estado actual: cerrada.');
+            renderAutoEvaluation();
+        }
+
+        function armButton(btn, textoConfirmar) {
+            if (!btn) return true;
+            if (btn.dataset.armed === '1') { btn.dataset.armed = ''; return true; }
+            btn.dataset.armed = '1';
+            btn.dataset.origText = btn.textContent;
+            btn.textContent = textoConfirmar;
+            btn.classList.add('ring-2', 'ring-red-300');
+            setTimeout(() => {
+                if (btn.isConnected && btn.dataset.armed === '1') {
+                    btn.dataset.armed = '';
+                    btn.textContent = btn.dataset.origText;
+                    btn.classList.remove('ring-2', 'ring-red-300');
+                }
+            }, 6000);
+            return false;
+        }
+
+        function populateParallelSelectors() {
+            ['studentParalelo', 'docParalelo', 'consultaParalelo', 'teamParalelo'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                sel.innerHTML = PARALELOS.map(p => '<option value="' + escapeHtml(p) + '">' + escapeHtml(p) + '</option>').join('');
+            });
+        }
+        function fillStudentSelect(id, paralelo) {
+            const select = document.getElementById(id);
+            if (!select) return;
+            const cur = select.value;
+            select.innerHTML = '<option value="">Seleccione su nombre...</option>' + (ROSTERS[paralelo] || []).map(name =>
+                '<option value="' + escapeHtml(name) + '">' + escapeHtml(shortName(name)) + '</option>'
+            ).join('');
+            if ((ROSTERS[paralelo] || []).includes(cur)) select.value = cur;
+        }
+        function handleAutoParallelChange() {
+            const p = document.getElementById('studentParalelo').value;
+            fillStudentSelect('autoStudent', p);
+            renderAutoEvaluation();
+        }
+        function handleAutoStudentChange() { renderAutoEvaluation(); }
+        function handleConsultaParallelChange() {
+            const p = document.getElementById('consultaParalelo').value;
+            fillStudentSelect('consultaEvaluador', p);
+            resetConsultaState();
+        }
+        function handleTeamParallelChange() {
+            const p = document.getElementById('teamParalelo').value;
+            applyTeamsForParallel(p);
+        }
+        function applyTeamsForParallel(paralelo) {
+            teams = JSON.parse(JSON.stringify(findGroupsForParallel(paralelo)));
+            renderTeamEditor();
+        }
+
+
+        function editorData() { return teams; }
+        function currentTeamParallel() { return document.getElementById('teamParalelo').value || PARALELOS[0]; }
+        function editorGenerateTeams() {
+            const n = parseInt(document.getElementById('numTeams').value, 10) || 0;
+            const max = parseInt(document.getElementById('numMembers').value, 10) || 0;
+            if (n < 1 || n > 12 || max < 1 || max > 8) { showToast('Revisa el número de equipos y el máximo de integrantes.'); return; }
+            const prev = editorData();
+            const out = [];
+            for (let i = 0; i < n; i++) {
+                out.push({
+                    id: 'G' + (i + 1),
+                    topic: prev[i] && prev[i].topic ? prev[i].topic : '',
+                    members: prev[i] && Array.isArray(prev[i].members) ? prev[i].members : [],
+                    maxMembers: max
+                });
+            }
+            teams = out;
+            renderTeamEditor();
+            showToast('Estructura generada. Todavía no se guarda en la nube.');
+        }
+        function editorRandomAssign() {
+            const t = editorData();
+            if (t.length === 0) { showToast('Primero genera una estructura de equipos.'); return; }
+            const max = t[0].maxMembers || 5;
+            t.forEach(x => { x.members = []; });
+            const shuffled = (ROSTERS[currentTeamParallel()] || []).slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp;
+            }
+            let idx = 0;
+            shuffled.forEach(s => {
+                let placed = false, tries = 0;
+                while (!placed && tries < t.length) {
+                    if (t[idx].members.length < max) { t[idx].members.push(s); placed = true; }
+                    idx = (idx + 1) % t.length;
+                    tries++;
+                }
+                if (!placed) t[0].members.push(s);
+            });
+            renderTeamEditor();
+            showToast('Asignación aplicada. Todavía no se guarda en la nube.');
+        }
+        function editorRemoveFromTeam(encName, teamIndex) {
+            const name = decodeURIComponent(encName);
+            if (!teams[teamIndex]) return;
+            teams[teamIndex].members = teams[teamIndex].members.filter(m => m !== name);
+            renderTeamEditor();
+        }
+        function editorAssignToTeam(encName, teamIndex) {
+            const name = decodeURIComponent(encName);
+            teams.forEach(t => { t.members = t.members.filter(m => m !== name); });
+            if (teamIndex >= 0 && teams[teamIndex]) teams[teamIndex].members.push(name);
+            renderTeamEditor();
+        }
+        function renderTeamEditor() {
+            const unassignedBox = document.getElementById('unassignedList');
+            if (!unassignedBox) return;
+            const roster = ROSTERS[currentTeamParallel()] || [];
+            const unassigned = roster.filter(s => !teams.some(t => (t.members || []).includes(s)));
+            document.getElementById('unassignedCount').textContent = unassigned.length;
+            unassignedBox.innerHTML = unassigned.map(name => {
+                const enc = encodeURIComponent(name);
+                return '<div class="p-2 border rounded bg-white shadow-sm flex flex-col gap-2">' +
+                    '<span class="font-medium text-gray-800">' + escapeHtml(shortName(name)) + '</span>' +
+                    '<label class="sr-only" for="assign-' + safeKey(name) + '">Asignar a ' + escapeHtml(name) + '</label>' +
+                    '<select id="assign-' + safeKey(name) + '" onchange="editorAssignToTeam(\'' + enc + '\', Number(this.value))" class="w-full border rounded p-2 bg-blue-50">' +
+                    '<option value="-1">Asignar a equipo...</option>' +
+                    teams.map((t, i) => '<option value="' + i + '">' + escapeHtml(groupLabel(t.id)) + '</option>').join('') +
+                    '</select></div>';
+            }).join('') || '<p class="text-gray-500 col-span-2">Todos los estudiantes están asignados.</p>';
+            document.getElementById('teamBuilder').innerHTML = teams.map((team, i) => {
+                const max = team.maxMembers || 5;
+                const members = Array.isArray(team.members) ? team.members : [];
+                return '<div class="p-3 border-2 ' + (members.length ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50') + ' rounded-lg">' +
+                    '<div class="flex justify-between items-center mb-2 gap-2"><span class="font-bold text-gray-700">' + escapeHtml(groupLabel(team.id)) + '</span>' +
+                    '<span class="' + (members.length >= max ? 'text-red-700 font-bold' : 'text-gray-600') + '">' + members.length + ' de ' + max + '</span></div>' +
+                    '<label for="topic-' + i + '">Pensador o corriente asignada</label>' +
+                    '<input id="topic-' + i + '" type="text" value="' + escapeHtml(team.topic || '') + '" onchange="editorData()[' + i + '].topic = this.value" class="w-full px-2 py-2 border rounded font-medium mb-2" placeholder="Escribe el pensador o corriente">' +
+                    '<div class="space-y-2">' +
+                    (members.length ? members.map(m => {
+                        const encM = encodeURIComponent(m);
+                        return '<div class="p-2 bg-white rounded border flex justify-between items-center gap-2 shadow-sm"><span>' + escapeHtml(shortName(m)) + '</span>' +
+                            '<button onclick="editorRemoveFromTeam(\'' + encM + '\', ' + i + ')" aria-label="Quitar a ' + escapeHtml(m) + ' del ' + escapeHtml(groupLabel(team.id)) + '" class="text-red-700 font-bold px-3 hover:bg-red-100 rounded">Quitar</button></div>';
+                    }).join('') : '<span class="text-gray-500 italic">Sin integrantes asignados.</span>') +
+                    '</div></div>';
+            }).join('') || '<p class="text-gray-500 col-span-2">Genera una estructura de equipos.</p>';
+        }
+        async function saveTeamsToCloud() {
+            const paralelo = currentTeamParallel();
+            try {
+                if (!db) throw new Error('Sin conexión a la nube.');
+                await db.ref(TEAMS_NODE + '/' + safeKey(paralelo)).set({ teams: editorData() });
+                document.getElementById('teamsCloudStatus').textContent = 'Guardado a las ' + new Date().toLocaleTimeString('es-EC');
+                showToast('Equipos guardados en la nube.');
+            } catch (e) { showToast('Error al guardar equipos: ' + e.message); }
+        }
+        async function resetTeamsToDefault(btn) {
+            if (!armButton(btn, 'Confirma la restauración')) return;
+            btn.textContent = btn.dataset.origText;
+            btn.classList.remove('ring-2', 'ring-red-300');
+            const p = currentTeamParallel();
+            teams = JSON.parse(JSON.stringify(DEFAULT_TEAMS_BY_PARALLEL[p] || []));
+            renderTeamEditor();
+            showToast('Equipos originales restaurados en el editor. Presiona Guardar equipos en la nube para aplicarlos.');
+        }
+
+
+        let autoFormDirty = false;
+        function renderAutoGuide() {
+            const box = document.getElementById('autoGuide');
+            if (!box) return;
+            box.innerHTML = '<section class="p-4 bg-blue-50 border border-blue-200 rounded-lg" aria-labelledby="auto-guide-title">' +
+                '<h3 id="auto-guide-title" class="text-xl font-bold text-blue-900 mb-3">Guía para revisar tu trabajo</h3>' +
+                '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">' + DOC_RUBRIC.map((c, i) =>
+                    '<article class="p-3 bg-white rounded border"><h4 class="font-bold text-blue-900">' + (i + 1) + '. ' + escapeHtml(c.title) + '</h4>' +
+                    '<p class="mt-2">' + escapeHtml(c.auto) + '</p></article>'
+                ).join('') + '</div>' +
+                '<div class="mt-4 p-3 bg-white rounded border"><h4 class="font-bold">Niveles de referencia</h4>' +
+                '<p><b>Excelente:</b> evidencia completa, precisa y bien fundamentada. <b>Bueno:</b> evidencia sólida con algunas omisiones. <b>En proceso:</b> evidencia parcial que necesita desarrollo. <b>Inicial:</b> evidencia muy limitada. <b>Sin evidencia:</b> no hay elementos suficientes para valorar.</p>' +
+                '<p class="mt-2">Los niveles que marques son un apoyo para reflexionar. No calculan tu nota: debes escribirla personalmente en el campo correspondiente.</p></div></section>';
+        }
+        function renderAutoEvaluation(force) {
+            const area = document.getElementById('autoEvaluationArea');
+            if (!area) return;
+            if (autoFormDirty && force !== true) return;
+            const paralelo = document.getElementById('studentParalelo').value;
+            const student = document.getElementById('autoStudent').value;
+            if (!student) {
+                area.innerHTML = '<p class="p-4 bg-gray-50 border rounded text-gray-600">Selecciona tu paralelo y tu nombre para comenzar.</p>';
+                return;
+            }
+            if (!evaluationsActive) {
+                area.innerHTML = '<p class="p-4 bg-red-50 border border-red-200 rounded text-red-800">El registro está cerrado. Si ya enviaste tu autoevaluación, se conserva en la nube.</p>';
+                return;
+            }
+            const prev = getAuto(student, paralelo);
+            const crit = prev && prev.criterios ? prev.criterios : {};
+            const prevBanner = prev ? '<div class="p-4 mb-4 bg-amber-50 border border-amber-300 rounded text-amber-900"><b>Ya tienes una autoevaluación guardada con nota ' + escapeHtml(fmt2(prev.nota)) + '.</b> Puedes corregir cualquier campo y volver a guardar. El nuevo envío reemplazará el anterior, sin crear un duplicado.</div>' : '';
+            const criteriaHtml = DOC_RUBRIC.map((c, i) => {
+                const current = typeof crit[c.key] === 'string' ? crit[c.key] : '';
+                return '<div class="p-3 border rounded bg-gray-50">' +
+                    '<label for="auto-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title) + '</label>' +
+                    '<select id="auto-' + c.key + '" onchange="autoFormDirty=true" class="mt-2 w-full border rounded px-3 py-2 bg-white">' +
+                    '<option value="">Sin marcar, solo uso la guía</option>' + AUTO_LEVELS.map(l => '<option value="' + l + '"' + (current === l ? ' selected' : '') + '>' + l + '</option>').join('') +
+                    '</select></div>';
+            }).join('');
+            area.innerHTML = '<section class="p-4 bg-white rounded-lg border shadow-sm" aria-label="Formulario de autoevaluación">' + prevBanner +
+                '<h3 class="text-xl font-bold text-blue-900 mb-3">' + escapeHtml(shortName(student)) + ' · ' + escapeHtml(paralelo) + '</h3>' +
+                '<fieldset><legend class="font-bold mb-2">Niveles de apoyo, opcionales</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-3">' + criteriaHtml + '</div></fieldset>' +
+                '<div class="mt-5 p-4 bg-blue-50 border border-blue-200 rounded">' +
+                '<label for="autoNota" class="block font-bold text-blue-900">Mi nota de autoevaluación sobre 10</label>' +
+                '<p class="mt-1">Escríbela personalmente con valores de 0 a 10 y un decimal como máximo.</p>' +
+                '<input id="autoNota" type="number" min="0" max="10" step="0.1" inputmode="decimal" required oninput="autoFormDirty=true" value="' + (prev && notaValida(prev.nota) ? prev.nota : '') + '" class="mt-2 w-full md:w-56 px-3 py-2 border border-blue-400 rounded bg-white" aria-describedby="autoNotaHelp">' +
+                '<span id="autoNotaHelp" class="block mt-1 text-gray-600">Este valor no se obtiene de los niveles anteriores.</span></div>' +
+                '<div class="mt-4"><label for="autoJustificacion" class="block font-bold text-gray-800">Justificación y reflexión breve, obligatoria</label>' +
+                '<textarea id="autoJustificacion" required oninput="autoFormDirty=true" class="mt-2 w-full px-3 py-2 border border-gray-400 rounded" rows="5" placeholder="Explica qué lograste, qué evidencias respaldan tu nota y qué podrías mejorar.">' + (prev ? escapeHtml(prev.justificacion || '') : '') + '</textarea></div>' +
+                '<div class="mt-4 flex flex-wrap items-center gap-3"><button id="saveAutoBtn" onclick="saveAutoEvaluation()" class="bg-green-700 text-white px-6 py-2 rounded font-bold hover:bg-green-800">' + (prev ? 'Guardar corrección' : 'Guardar autoevaluación') + '</button>' +
+                '<span id="autoSaveStatus" class="text-gray-600" role="status"></span></div></section>';
+        }
+        async function saveAutoEvaluation() {
+            const paralelo = document.getElementById('studentParalelo').value;
+            const student = document.getElementById('autoStudent').value;
+            const btn = document.getElementById('saveAutoBtn');
+            try {
+                if (!evaluationsActive) { showToast('La autoevaluación está cerrada.'); return; }
+                if (!paralelo || !student) { showToast('Selecciona tu paralelo y tu nombre.'); return; }
+                const nota = Number(document.getElementById('autoNota').value);
+                if (!notaValida(nota)) { showToast('Escribe una nota entre 0 y 10.'); return; }
+                if (Math.abs(nota * 10 - Math.round(nota * 10)) > 1e-8) { showToast('Usa un decimal como máximo para tu nota.'); return; }
+                const justificacion = document.getElementById('autoJustificacion').value.trim();
+                if (!justificacion) { showToast('Escribe una justificación antes de guardar.'); return; }
+                const criterios = {};
+                DOC_RUBRIC.forEach(c => { criterios[c.key] = document.getElementById('auto-' + c.key).value; });
+                if (!db) throw new Error('No hay conexión con Firebase.');
+                if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+                const key = safeKey(student);
+                const payload = {
+                    paralelo: paralelo,
+                    estudiante: student,
+                    nota: Math.round(nota * 10) / 10,
+                    criterios: criterios,
+                    justificacion: justificacion,
+                    timestamp: new Date().toISOString()
+                };
+                await db.ref(AUTO_NODE + '/' + safeKey(paralelo) + '/' + key).set(payload);
+                autoFormDirty = false;
+                showToast(prevMessage(getAuto(student, paralelo)) + ' Nota guardada: ' + fmt2(nota) + '.');
+                renderAutoEvaluation(true);
+            } catch (e) {
+                console.error('Error guardando la autoevaluación:', e);
+                showToast('No se pudo guardar: ' + e.message);
+                if (btn) { btn.disabled = false; btn.textContent = 'Guardar autoevaluación'; }
+            }
+        }
+        function prevMessage(prev) { return prev ? 'Tu corrección reemplazó el registro anterior.' : 'Autoevaluación registrada.'; }
+
+        // ============================================================
+        // MODELO DE NOTAS — ADA 4 "Pensadores económicos: mercado y Estado"
+        // La autoevaluación es la nota que el estudiante escribe y justifica.
+        // La nota docente es el promedio de los cuatro criterios de DOC_RUBRIC.
+        // La nota final pondera la nota docente al 70 % y la autoevaluación al 30 %.
+        // ============================================================
+
+        let docDraft = { paralelo: null, student: null, criterios: { c1: null, c2: null, c3: null, c4: null }, comentario: '' };
+
+        function numOrNull(v) {
+            if (v === null || v === undefined || v === '') return null;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : null;
+        }
+
+        function notaDocenteDe(criterios) {
+            const c = criterios || {};
+            const vals = DOC_RUBRIC.map(function (x) { return numOrNull(c[x.key]); });
+            if (vals.some(function (v) { return v === null || v < 0 || v > 10; })) return null;
+            return round2(vals.reduce(function (a, b) { return a + b; }, 0) / vals.length);
+        }
+
+        function todosLosEstudiantes() {
+            const out = [];
+            PARALELOS.forEach(function (p) {
+                orderedRoster(p).forEach(function (m) { if (out.indexOf(m) === -1) out.push(m); });
+            });
+            return out;
+        }
+
+        function paraleloDe(student) {
+            for (let i = 0; i < PARALELOS.length; i++) {
+                if (orderedRoster(PARALELOS[i]).indexOf(student) !== -1) return PARALELOS[i];
+            }
+            return PARALELOS[0];
+        }
+
+        function estadoDe(student, paralelo) {
+            const p = paralelo || paraleloDe(student);
+            const auto = getAuto(student, p);
+            const doc = getDocente(student, p);
+            const notaAuto = (auto && notaValida(Number(auto.nota))) ? round2(Number(auto.nota)) : null;
+            const notaDoc = doc ? notaDocenteDe(doc.criterios) : null;
+            return {
+                paralelo: p, auto: auto, doc: doc,
+                notaAuto: notaAuto, notaDoc: notaDoc,
+                final: calcNotaFinal(notaDoc, notaAuto)
+            };
+        }
+
+        function fmtNota(v) { return v === null || v === undefined ? 'Pendiente' : fmt2(v); }
+
+        function colorNota(v) {
+            if (v === null || v === undefined) return 'text-gray-400';
+            if (v >= 7) return 'text-green-700';
+            if (v >= 6) return 'text-blue-700';
+            return 'text-red-600';
+        }
+
+        // --- RETROALIMENTACIÓN AUTOMÁTICA ---
+        function buildFeedbackAuto(student, paralelo) {
+            const e = estadoDe(student, paralelo);
+            if (!e.doc && !e.auto) return 'Aún no hay registros de este estudiante.';
+            if (!e.doc) return 'Falta la evaluación del docente para calcular la nota final.';
+            if (!e.auto) return 'Falta la autoevaluación del estudiante para calcular la nota final.';
+
+            const partes = [];
+            const crit = DOC_RUBRIC.map(function (c) {
+                return { title: c.title, val: numOrNull((e.doc.criterios || {})[c.key]) };
+            }).filter(function (c) { return c.val !== null; });
+
+            const ordenados = crit.slice().sort(function (a, b) { return b.val - a.val; });
+            const altos = ordenados.filter(function (c) { return c.val >= 7; });
+            const bajos = ordenados.filter(function (c) { return c.val < 7; }).reverse();
+
+            if (e.final !== null && e.final >= 7) {
+                partes.push('Felicitaciones: tu nota final es ' + fmt2(e.final) + ' sobre diez.');
+            } else if (e.final !== null) {
+                partes.push('Tu nota final es ' + fmt2(e.final) + ' sobre diez.');
+            }
+
+            if (altos.length > 0) {
+                partes.push('Se reconoce el trabajo en ' + altos.slice(0, 2).map(function (c) { return c.title.toLowerCase(); }).join(' y ') + '.');
+            }
+            if (bajos.length > 0) {
+                partes.push('La principal oportunidad de mejora está en ' + bajos[0].title.toLowerCase() + '.');
+                if (bajos.length > 1) partes.push('Conviene reforzar también ' + bajos[1].title.toLowerCase() + '.');
+            } else if (altos.length > 0) {
+                partes.push('Mantén ese nivel de precisión y de evidencia en la defensa oral del guion.');
+            }
+
+            const dif = Math.abs(e.notaAuto - e.notaDoc);
+            if (dif >= 1.5) {
+                partes.push('Tu autoevaluación (' + fmt2(e.notaAuto) + ') y la nota del docente (' + fmt2(e.notaDoc) + ') difieren en ' + fmt2(dif) + ' puntos; revisa juntos la evidencia de cada criterio.');
+            }
+            return partes.join(' ');
+        }
+
+        // ============================================================
+        // EVALUACIÓN DOCENTE INDIVIDUAL (cuatro criterios de 0 a 10)
+        // ============================================================
+        function renderDocenteRubrica() {
+            const cont = document.getElementById('docenteRubricaArea');
+            if (!cont) return;
+
+            const selP = document.getElementById('docParalelo');
+            const paralelo = (selP && PARALELOS.indexOf(selP.value) !== -1) ? selP.value
+                : (PARALELOS.indexOf(docDraft.paralelo) !== -1 ? docDraft.paralelo : PARALELOS[0]);
+            if (docDraft.paralelo !== paralelo) {
+                docDraft.paralelo = paralelo;
+                docDraft.student = null;
+                docDraft.criterios = { c1: null, c2: null, c3: null, c4: null };
+                docDraft.comentario = '';
+            }
+
+            let html = '<div class="flex flex-wrap gap-3 items-end mb-4">' +
+                '<div><label for="docParalelo" class="block text-sm font-bold text-gray-700">Paralelo</label>' +
+                '<select id="docParalelo" onchange="docCambiarParalelo()" class="mt-1 border rounded px-3 py-2 bg-white">' +
+                PARALELOS.map(function (p) {
+                    return '<option value="' + escapeHtml(p) + '"' + (p === paralelo ? ' selected' : '') + '>' + escapeHtml(p) + '</option>';
+                }).join('') +
+                '</select></div>' +
+                '<div class="flex-1 min-w-[240px]"><label for="docStudent" class="block text-sm font-bold text-gray-700">Estudiante</label>' +
+                '<select id="docStudent" onchange="docCambiarEstudiante()" class="mt-1 w-full border rounded px-3 py-2 bg-white">' +
+                '<option value="">Seleccione un estudiante...</option>' +
+                orderedRoster(paralelo).map(function (n) {
+                    return '<option value="' + escapeHtml(n) + '"' + (docDraft.student === n ? ' selected' : '') + '>' + escapeHtml(shortName(n)) + '</option>';
+                }).join('') +
+                '</select></div></div>';
+
+            if (!docDraft.student) {
+                cont.innerHTML = html + '<p class="p-4 bg-gray-50 border rounded text-gray-600">Selecciona un estudiante para registrar su evaluación.</p>';
+                return;
+            }
+
+            html += '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">';
+            DOC_RUBRIC.forEach(function (c, i) {
+                const v = numOrNull(docDraft.criterios[c.key]);
+                html += '<div class="p-3 border rounded bg-gray-50">' +
+                    '<label for="docCrit-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title) + '</label>' +
+                    '<input id="docCrit-' + c.key + '" type="number" min="0" max="10" step="0.1" inputmode="decimal" value="' + (v === null ? '' : v) + '" ' +
+                    'oninput="docSetCriterio(\'' + c.key + '\', this.value)" class="mt-2 w-full md:w-32 px-3 py-2 border border-blue-400 rounded bg-white">' +
+                    '<span id="docDesc-' + c.key + '" class="mt-1 block text-xs leading-snug text-gray-400">Sin puntuación todavía.</span>' +
+                    '</div>';
+            });
+            html += '</div>';
+
+            html += '<div class="mt-4"><label for="docComentario" class="block font-bold text-gray-800">Comentario docente (opcional)</label>' +
+                '<textarea id="docComentario" rows="3" oninput="docSetComentario(this.value)" placeholder="Observaciones que verá el estudiante en su informe." class="mt-2 w-full px-3 py-2 border border-gray-400 rounded">' + escapeHtml(docDraft.comentario || '') + '</textarea></div>';
+
+            html += '<div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">' +
+                '<div class="p-3 bg-gray-50 border rounded"><span class="block text-xs font-bold text-gray-600 uppercase">Nota docente</span><span id="docLiveDoc" class="text-2xl font-bold text-gray-400">Pendiente</span></div>' +
+                '<div class="p-3 bg-gray-50 border rounded"><span class="block text-xs font-bold text-gray-600 uppercase">Autoevaluación</span><span id="docLiveAuto" class="text-2xl font-bold text-gray-400">Pendiente</span></div>' +
+                '<div class="p-3 bg-gray-50 border rounded"><span class="block text-xs font-bold text-gray-600 uppercase">Nota final</span><span id="docLiveFinal" class="text-2xl font-bold text-gray-400">Pendiente</span></div>' +
+                '</div>';
+
+            html += '<div class="mt-4 flex flex-wrap items-center gap-3">' +
+                '<button onclick="docGuardarEstudiante(this)" class="bg-green-700 text-white px-5 py-2 rounded font-bold text-sm hover:bg-green-800">Guardar evaluación</button>' +
+                '<button onclick="docBorrarEstudiante(this)" class="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600">Borrar evaluación de este estudiante</button>' +
+                '<span id="docSaveStatus" class="text-xs text-gray-500" role="status"></span></div>';
+
+            cont.innerHTML = html;
+            docRefreshLive();
+        }
+
+        function docCambiarParalelo() {
+            const sel = document.getElementById('docParalelo');
+            docDraft.paralelo = sel ? sel.value : PARALELOS[0];
+            docDraft.student = null;
+            docDraft.criterios = { c1: null, c2: null, c3: null, c4: null };
+            docDraft.comentario = '';
+            renderDocenteRubrica();
+        }
+
+        function docCambiarEstudiante() {
+            const sel = document.getElementById('docStudent');
+            const student = sel ? sel.value : '';
+            docDraft.student = student || null;
+            const prev = student ? getDocente(student, docDraft.paralelo) : null;
+            const crit = (prev && prev.criterios) ? prev.criterios : {};
+            docDraft.criterios = {
+                c1: numOrNull(crit.c1), c2: numOrNull(crit.c2),
+                c3: numOrNull(crit.c3), c4: numOrNull(crit.c4)
+            };
+            docDraft.comentario = prev ? (prev.comentario || '') : '';
+            renderDocenteRubrica();
+        }
+
+        function docSetCriterio(key, val) {
+            docDraft.criterios[key] = numOrNull(val);
+            docRefreshLive();
+        }
+
+        function docSetComentario(val) { docDraft.comentario = val; }
+
+        function docRefreshLive() {
+            DOC_RUBRIC.forEach(function (c) {
+                const span = document.getElementById('docDesc-' + c.key);
+                if (!span) return;
+                const v = numOrNull(docDraft.criterios[c.key]);
+                const lv = levelForScore(v);
+                if (lv === null) {
+                    span.textContent = 'Sin puntuación todavía.';
+                    span.className = 'mt-1 block text-xs leading-snug text-gray-400';
+                } else {
+                    span.textContent = c.levels[lv].label + ': ' + c.levels[lv].text;
+                    span.className = 'mt-1 block text-xs leading-snug ' + (lv === 0 ? 'text-green-700' : (lv === 1 ? 'text-blue-700' : (lv === 2 ? 'text-amber-700' : 'text-red-700')));
+                }
+            });
+            const e = docDraft.student ? estadoDe(docDraft.student, docDraft.paralelo) : null;
+            const notaDoc = notaDocenteDe(docDraft.criterios);
+            const notaAuto = e ? e.notaAuto : null;
+            const fin = calcNotaFinal(notaDoc, notaAuto);
+            const setTxt = function (id, txt, cls) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = txt;
+                el.className = 'text-2xl font-bold ' + cls;
+            };
+            setTxt('docLiveDoc', fmtNota(notaDoc), colorNota(notaDoc));
+            setTxt('docLiveAuto', fmtNota(notaAuto), colorNota(notaAuto));
+            setTxt('docLiveFinal', fmtNota(fin), colorNota(fin));
+        }
+
+        async function docGuardarEstudiante(btn) {
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            const student = docDraft.student;
+            const paralelo = docDraft.paralelo;
+            if (!student || !paralelo) { showToast('Elige un paralelo y un estudiante.'); return; }
+            const crit = {};
+            DOC_RUBRIC.forEach(function (c) { crit[c.key] = numOrNull(docDraft.criterios[c.key]); });
+            if (DOC_RUBRIC.some(function (c) { return crit[c.key] === null; })) {
+                showToast('Completa los cuatro criterios antes de guardar.');
+                return;
+            }
+            if (DOC_RUBRIC.some(function (c) { return crit[c.key] < 0 || crit[c.key] > 10; })) {
+                showToast('Cada criterio debe estar entre 0 y 10.');
+                return;
+            }
+            const nota = notaDocenteDe(crit);
+            if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
+            const st = document.getElementById('docSaveStatus');
+            try {
+                await db.ref(DOCENTE_NODE + '/' + safeKey(paralelo) + '/' + safeKey(student)).set({
+                    paralelo: paralelo,
+                    estudiante: student,
+                    criterios: crit,
+                    notaDocente: nota,
+                    comentario: (docDraft.comentario || '').trim(),
+                    timestamp: new Date().toISOString()
+                });
+                if (st) st.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-EC');
+                showToast('Evaluación de ' + shortName(student) + ' guardada.');
+            } catch (e) {
+                showToast('No se pudo guardar: ' + e.message);
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Guardar evaluación'; }
+            }
+        }
+
+        async function docBorrarEstudiante(btn) {
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            if (!docDraft.student) return;
+            if (!armButton(btn, '¿Confirmar borrado de esta evaluación?')) return;
+            btn.textContent = btn.dataset.origText;
+            btn.classList.remove('ring-2', 'ring-red-300');
+            try {
+                await db.ref(DOCENTE_NODE + '/' + safeKey(docDraft.paralelo) + '/' + safeKey(docDraft.student)).remove();
+                docDraft.criterios = { c1: null, c2: null, c3: null, c4: null };
+                docDraft.comentario = '';
+                renderDocenteRubrica();
+                showToast('Evaluación de ' + shortName(docDraft.student) + ' borrada.');
+            } catch (e) {
+                showToast('No se pudo borrar: ' + e.message);
+            }
+        }
+
+        // ============================================================
+        // TABLA EN VIVO (ocho columnas)
+        // ============================================================
+        function renderLiveGrades() {
+            const tbody = document.getElementById('liveGradesBody');
+            if (!tbody) return;
+            const filas = [];
+            PARALELOS.forEach(function (p) {
+                orderedRoster(p).forEach(function (student) {
+                    const e = estadoDe(student, p);
+                    const g = findGroupOf(student, p);
+                    const fb = buildFeedbackAuto(student, p);
+                    const comentario = (e.doc && e.doc.comentario) ? e.doc.comentario : '--';
+                    filas.push('<tr>' +
+                        '<td class="border p-2 text-xs">' + escapeHtml(p) + '</td>' +
+                        '<td class="border p-2 text-xs">' + escapeHtml(shortName(student)) + '</td>' +
+                        '<td class="border p-2 text-center text-xs">' + (g ? escapeHtml(groupLabel(g.id)) : '--') + '</td>' +
+                        '<td class="border p-2 text-center text-sm ' + colorNota(e.notaAuto) + '">' + fmtNota(e.notaAuto) + '</td>' +
+                        '<td class="border p-2 text-center text-sm ' + colorNota(e.notaDoc) + '">' + fmtNota(e.notaDoc) + '</td>' +
+                        '<td class="border p-2 text-center text-sm font-bold ' + colorNota(e.final) + '">' + fmtNota(e.final) + '</td>' +
+                        '<td class="border p-2 text-[11px] leading-snug text-gray-700">' + escapeHtml(fb) + '</td>' +
+                        '<td class="border p-2 text-[11px] leading-snug text-gray-700">' + escapeHtml(comentario) + '</td>' +
+                        '</tr>');
+                });
+            });
+            tbody.innerHTML = filas.length ? filas.join('')
+                : '<tr><td colspan="8" class="border p-3 text-center text-gray-400">Sin estudiantes.</td></tr>';
+        }
+
+        // ============================================================
+        // REGISTROS INDIVIDUALES (borrado de dos clics por registro)
+        // ============================================================
+        function renderAdminRecords() {
+            const box = document.getElementById('adminRecordsList');
+            if (!box) return;
+            const tarjetas = [];
+            PARALELOS.forEach(function (p) {
+                orderedRoster(p).forEach(function (student) {
+                    const e = estadoDe(student, p);
+                    if (!e.auto && !e.doc) return;
+                    const pEnc = escapeHtml(p);
+                    const sEnc = escapeHtml(student);
+                    const btnAuto = e.auto
+                        ? '<button data-p="' + pEnc + '" data-s="' + sEnc + '" data-tipo="auto" onclick="adminBorrarRegistro(this)" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Borrar autoevaluación</button>'
+                        : '<span class="text-xs text-gray-400">Sin autoevaluación</span>';
+                    const btnDoc = e.doc
+                        ? '<button data-p="' + pEnc + '" data-s="' + sEnc + '" data-tipo="docente" onclick="adminBorrarRegistro(this)" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Borrar evaluación docente</button>'
+                        : '<span class="text-xs text-gray-400">Sin evaluación docente</span>';
+                    tarjetas.push('<div class="p-3 bg-white border rounded shadow-sm">' +
+                        '<div class="flex flex-wrap justify-between items-center gap-2">' +
+                        '<div><strong class="text-gray-800">' + escapeHtml(shortName(student)) + '</strong>' +
+                        '<span class="text-gray-500 text-xs"> · ' + pEnc + '</span><br>' +
+                        '<span class="text-xs text-gray-600">Autoevaluación: ' + fmtNota(e.notaAuto) + ' · Docente: ' + fmtNota(e.notaDoc) + ' · Final: ' + fmtNota(e.final) + '</span></div>' +
+                        '<div class="flex flex-wrap gap-2">' + btnAuto + btnDoc + '</div>' +
+                        '</div></div>');
+                });
+            });
+            box.innerHTML = tarjetas.length ? tarjetas.join('')
+                : '<p class="text-gray-500 p-2 text-center">No hay registros.</p>';
+        }
+
+        async function adminBorrarRegistro(btn) {
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            const paralelo = btn.getAttribute('data-p');
+            const student = btn.getAttribute('data-s');
+            const tipo = btn.getAttribute('data-tipo');
+            const etiqueta = tipo === 'auto' ? 'la autoevaluación' : 'la evaluación docente';
+            if (!armButton(btn, '¿Confirmar borrado?')) return;
+            btn.textContent = btn.dataset.origText;
+            btn.classList.remove('ring-2', 'ring-red-300');
+            const node = tipo === 'auto' ? AUTO_NODE : DOCENTE_NODE;
+            try {
+                await db.ref(node + '/' + safeKey(paralelo) + '/' + safeKey(student)).remove();
+                showToast('Se borró ' + etiqueta + ' de ' + shortName(student) + '.');
+            } catch (e) {
+                showToast('No se pudo borrar: ' + e.message);
+            }
+        }
+
+        function updateStats() {
+            const total = todosLosEstudiantes().length;
+            let enviadas = 0;
+            PARALELOS.forEach(function (p) {
+                const regs = recordsFor(autoRecords, p);
+                Object.keys(regs).forEach(function (k) { if (regs[k]) enviadas++; });
+            });
+            const el = document.getElementById('statEvals');
+            if (el) el.textContent = enviadas + (enviadas === 1 ? ' autoevaluación' : ' autoevaluaciones');
+            const pc = document.getElementById('participationCounter');
+            if (pc) pc.textContent = 'Participación: ' + enviadas + ' de ' + total + ' estudiantes han enviado su autoevaluación';
+        }
+
+        // ============================================================
+        // INFORME DEL ESTUDIANTE
+        // ============================================================
+        function buildReport(student) {
+            const paralelo = paraleloDe(student);
+            const e = estadoDe(student, paralelo);
+            const g = findGroupOf(student, paralelo);
+            const critDoc = (e.doc && e.doc.criterios) ? e.doc.criterios : {};
+            const criterios = DOC_RUBRIC.map(function (c) {
+                const v = numOrNull(critDoc[c.key]);
+                const lv = levelForScore(v);
+                return {
+                    title: c.title,
+                    val: v,
+                    label: lv === null ? 'Sin puntuación' : c.levels[lv].label,
+                    text: lv === null ? '' : c.levels[lv].text
+                };
+            });
+            return {
+                student: student,
+                paralelo: paralelo,
+                grupo: g ? groupLabel(g.id) : 'Sin equipo',
+                auto: e.auto,
+                doc: e.doc,
+                notaAuto: e.notaAuto,
+                notaDoc: e.notaDoc,
+                final: e.final,
+                criterios: criterios,
+                justificacion: (e.auto && e.auto.justificacion) ? e.auto.justificacion : '',
+                comentario: (e.doc && e.doc.comentario) ? e.doc.comentario : '',
+                fb: buildFeedbackAuto(student, paralelo)
+            };
+        }
+
+        function renderConsulta() {
+            const area = document.getElementById('consultaArea');
+            if (!area) return;
+            if (!consultaUnlockedStudent) {
+                area.innerHTML = '<p class="text-gray-600">Elige tu paralelo y nombre, escribe tu código personal y presiona Ver mi informe.</p>';
+                return;
+            }
+            const r = buildReport(consultaUnlockedStudent);
+            const row = function (label, val) {
+                return '<div class="flex justify-between gap-3 border-b py-1"><span class="text-gray-600">' + label + '</span><span class="font-semibold text-right">' + val + '</span></div>';
+            };
+            const crits = r.criterios.map(function (c) {
+                return '<div class="border-b py-1"><div class="flex justify-between gap-3"><span class="text-gray-600">' + escapeHtml(c.title) + '</span>' +
+                    '<span class="font-semibold">' + (c.val === null ? 'Pendiente' : fmt2(c.val) + ' · ' + escapeHtml(c.label)) + '</span></div></div>';
+            }).join('');
+            area.innerHTML = '<div class="p-4 bg-white rounded border max-w-2xl">' +
+                '<h3 class="font-bold text-blue-900 text-lg mb-1">' + escapeHtml(shortName(r.student)) + '</h3>' +
+                '<p class="text-gray-500 text-sm mb-3">' + escapeHtml(r.paralelo) + ' · ' + escapeHtml(r.grupo) + '</p>' +
+                row('Autoevaluación', fmtNota(r.notaAuto) + ' / 10') +
+                row('Nota docente', fmtNota(r.notaDoc) + ' / 10') +
+                '<div class="flex justify-between py-2 mt-1"><span class="font-bold">Nota final</span>' +
+                '<span class="font-bold text-xl ' + colorNota(r.final) + '">' + fmtNota(r.final) + ' / 10</span></div>' +
+                '<h4 class="font-bold text-gray-800 mt-4 mb-1">Criterios de la evaluación docente</h4>' + crits +
+                (r.justificacion ? '<h4 class="font-bold text-gray-800 mt-4 mb-1">Tu justificación</h4><p class="text-sm text-gray-700">' + escapeHtml(r.justificacion) + '</p>' : '') +
+                (r.comentario ? '<h4 class="font-bold text-gray-800 mt-4 mb-1">Comentario del docente</h4><p class="text-sm text-gray-700">' + escapeHtml(r.comentario) + '</p>' : '') +
+                '<div class="mt-3 p-3 bg-blue-50 rounded border border-blue-200 text-sm text-gray-700">' + escapeHtml(r.fb) + '</div>' +
+                '<div class="mt-4 flex flex-wrap gap-2">' +
+                '<button onclick="descargarInforme()" class="bg-blue-700 text-white px-5 py-2 rounded font-bold text-sm hover:bg-blue-800">Descargar informe</button>' +
+                '<button onclick="resetConsultaState()" class="bg-gray-200 text-gray-800 px-5 py-2 rounded font-bold text-sm hover:bg-gray-300">Cerrar informe</button>' +
+                '</div></div>';
+            armConsultaIdleLock();
+        }
+
+        // ============================================================
+        // EXPORTACIÓN
+        // ============================================================
+        const EXPORT_HEAD = ['Paralelo', 'Estudiante', 'Equipo', 'Autoevaluación', 'Nota docente', 'Nota final', 'Retroalimentación automática', 'Comentario docente'];
+
+        function exportResumenRows() {
+            const rows = [EXPORT_HEAD.slice()];
+            PARALELOS.forEach(function (p) {
+                orderedRoster(p).forEach(function (student) {
+                    const e = estadoDe(student, p);
+                    const g = findGroupOf(student, p);
+                    rows.push([
+                        p,
+                        shortName(student),
+                        g ? groupLabel(g.id) : '',
+                        e.notaAuto === null ? '' : e.notaAuto,
+                        e.notaDoc === null ? '' : e.notaDoc,
+                        e.final === null ? '' : e.final,
+                        buildFeedbackAuto(student, p),
+                        (e.doc && e.doc.comentario) ? e.doc.comentario : ''
+                    ]);
+                });
+            });
+            return rows;
+        }
+
+        function exportCriteriosRows() {
+            const rows = [['Paralelo', 'Estudiante', 'Criterio 1', 'Criterio 2', 'Criterio 3', 'Criterio 4', 'Nota docente', 'Autoevaluación', 'Nota final', 'Justificación', 'Comentario docente']];
+            PARALELOS.forEach(function (p) {
+                orderedRoster(p).forEach(function (student) {
+                    const e = estadoDe(student, p);
+                    const c = (e.doc && e.doc.criterios) ? e.doc.criterios : {};
+                    rows.push([
+                        p,
+                        shortName(student),
+                        numOrNull(c.c1) === null ? '' : numOrNull(c.c1),
+                        numOrNull(c.c2) === null ? '' : numOrNull(c.c2),
+                        numOrNull(c.c3) === null ? '' : numOrNull(c.c3),
+                        numOrNull(c.c4) === null ? '' : numOrNull(c.c4),
+                        e.notaDoc === null ? '' : e.notaDoc,
+                        e.notaAuto === null ? '' : e.notaAuto,
+                        e.final === null ? '' : e.final,
+                        (e.auto && e.auto.justificacion) ? e.auto.justificacion : '',
+                        (e.doc && e.doc.comentario) ? e.doc.comentario : ''
+                    ]);
+                });
+            });
+            return rows;
+        }
+
+        function _csvCell(v) {
+            const s = (v === null || v === undefined) ? '' : String(v);
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+
+        function _download(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+        }
+
+        function exportToCSV() {
+            try {
+                let csv = '\ufeff';
+                exportResumenRows().forEach(function (row) { csv += row.map(_csvCell).join(',') + '\r\n'; });
+                csv += '\r\n';
+                exportCriteriosRows().forEach(function (row) { csv += row.map(_csvCell).join(',') + '\r\n'; });
+                _download(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Reporte_ADA4_Pensadores_Economicos.csv');
+                showToast('Reporte CSV descargado.');
+            } catch (e) { showToast('Error al generar CSV: ' + e.message); }
+        }
+
+        // --- GENERADOR XLSX SIN DEPENDENCIAS (ZIP almacenado + CRC32) ---
+        function _crc32(u8) {
+            let crc = 0xFFFFFFFF;
+            for (let i = 0; i < u8.length; i++) {
+                crc ^= u8[i];
+                for (let k = 0; k < 8; k++) crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1));
+            }
+            return (crc ^ 0xFFFFFFFF) >>> 0;
+        }
+
+        function _zip(files) {
+            const enc = new TextEncoder();
+            const chunks = [];
+            const central = [];
+            let offset = 0;
+            files.forEach(f => {
+                const nameBytes = enc.encode(f.name);
+                const crc = _crc32(f.data);
+                const size = f.data.length;
+                const lh = new Uint8Array(30 + nameBytes.length);
+                const dv = new DataView(lh.buffer);
+                dv.setUint32(0, 0x04034b50, true);
+                dv.setUint16(4, 20, true);
+                dv.setUint16(6, 0, true);
+                dv.setUint16(8, 0, true);
+                dv.setUint16(10, 0, true);
+                dv.setUint16(12, 0, true);
+                dv.setUint32(14, crc, true);
+                dv.setUint32(18, size, true);
+                dv.setUint32(22, size, true);
+                dv.setUint16(26, nameBytes.length, true);
+                dv.setUint16(28, 0, true);
+                lh.set(nameBytes, 30);
+                chunks.push(lh, f.data);
+                const ch = new Uint8Array(46 + nameBytes.length);
+                const cv = new DataView(ch.buffer);
+                cv.setUint32(0, 0x02014b50, true);
+                cv.setUint16(4, 20, true);
+                cv.setUint16(6, 20, true);
+                cv.setUint16(8, 0, true);
+                cv.setUint16(10, 0, true);
+                cv.setUint16(12, 0, true);
+                cv.setUint16(14, 0, true);
+                cv.setUint32(16, crc, true);
+                cv.setUint32(20, size, true);
+                cv.setUint32(24, size, true);
+                cv.setUint16(28, nameBytes.length, true);
+                cv.setUint16(30, 0, true);
+                cv.setUint16(32, 0, true);
+                cv.setUint16(34, 0, true);
+                cv.setUint16(36, 0, true);
+                cv.setUint32(38, 0, true);
+                cv.setUint32(42, offset, true);
+                ch.set(nameBytes, 46);
+                central.push(ch);
+                offset += lh.length + size;
+            });
+            let cdSize = 0;
+            central.forEach(c => { cdSize += c.length; });
+            const eocd = new Uint8Array(22);
+            const ev = new DataView(eocd.buffer);
+            ev.setUint32(0, 0x06054b50, true);
+            ev.setUint16(4, 0, true);
+            ev.setUint16(6, 0, true);
+            ev.setUint16(8, files.length, true);
+            ev.setUint16(10, files.length, true);
+            ev.setUint32(12, cdSize, true);
+            ev.setUint32(16, offset, true);
+            ev.setUint16(20, 0, true);
+            const all = chunks.concat(central, [eocd]);
+            let total = 0;
+            all.forEach(a => { total += a.length; });
+            const out = new Uint8Array(total);
+            let p = 0;
+            all.forEach(a => { out.set(a, p); p += a.length; });
+            return out;
+        }
+
+        function _xmlEsc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function _colLetter(n) {
+            let s = '';
+            while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
+            return s;
+        }
+
+        function _sheetXml(rows) {
+            let x = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>';
+            rows.forEach((row, ri) => {
+                x += '<row r="' + (ri + 1) + '">';
+                row.forEach((val, ci) => {
+                    const ref = _colLetter(ci + 1) + (ri + 1);
+                    const style = ri === 0 ? ' s="1"' : '';
+                    if (typeof val === 'number' && isFinite(val)) {
+                        x += '<c r="' + ref + '"' + style + '><v>' + val + '</v></c>';
+                    } else {
+                        const s = (val === null || val === undefined) ? '' : String(val);
+                        if (s === '') x += '<c r="' + ref + '"' + style + '/>';
+                        else x += '<c r="' + ref + '"' + style + ' t="inlineStr"><is><t xml:space="preserve">' + _xmlEsc(s) + '</t></is></c>';
+                    }
+                });
+                x += '</row>';
+            });
+            x += '</sheetData></worksheet>';
+            return x;
+        }
+
+        function _xlsx(sheets) {
+            const enc = new TextEncoder();
+            const files = [];
+            const n = sheets.length;
+            let ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+                '<Default Extension="xml" ContentType="application/xml"/>' +
+                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+                '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>';
+            for (let i = 1; i <= n; i++) ct += '<Override PartName="/xl/worksheets/sheet' + i + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+            ct += '</Types>';
+            files.push({ name: '[Content_Types].xml', data: enc.encode(ct) });
+            files.push({ name: '_rels/.rels', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>') });
+            let wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>';
+            sheets.forEach((s, i) => { wb += '<sheet name="' + _xmlEsc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>'; });
+            wb += '</sheets></workbook>';
+            files.push({ name: 'xl/workbook.xml', data: enc.encode(wb) });
+            let rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
+            sheets.forEach((s, i) => { rels += '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>'; });
+            rels += '<Relationship Id="rId' + (n + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+            files.push({ name: 'xl/_rels/workbook.xml.rels', data: enc.encode(rels) });
+            const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs></styleSheet>';
+            files.push({ name: 'xl/styles.xml', data: enc.encode(styles) });
+            sheets.forEach((s, i) => { files.push({ name: 'xl/worksheets/sheet' + (i + 1) + '.xml', data: enc.encode(_sheetXml(s.rows)) }); });
+            return _zip(files);
+        }
+
+        function exportToXlsx() {
+            try {
+                const bytes = _xlsx([
+                    { name: 'Resumen', rows: exportResumenRows() },
+                    { name: 'Criterios', rows: exportCriteriosRows() }
+                ]);
+                _download(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'Reporte_ADA4_Pensadores_Economicos.xlsx');
+                showToast('Reporte Excel descargado.');
+            } catch (e) { showToast('Error al generar Excel: ' + e.message); }
+        }
+
+        function exportToPDF() {
+            try {
+                const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+                if (!jsPDFCtor) { showToast('No se pudo cargar el generador de PDF.'); return; }
+                const rows = exportResumenRows();
+                const doc = new jsPDFCtor({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+                const M = 10;
+                const widths = [20, 46, 14, 16, 16, 16, 94, 51];
+                let y = 15;
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(30, 58, 138);
+                doc.text('ADA 4 - Pensadores economicos: mercado y Estado', M, y); y += 6;
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(75, 85, 99);
+                doc.text('Historia y Educacion para la Ciudadania - 1 BGU - ' + new Date().toLocaleDateString('es-EC'), M, y); y += 7;
+                doc.setTextColor(17, 24, 39);
+
+                const drawRow = function (cells, header) {
+                    doc.setFont('helvetica', header ? 'bold' : 'normal');
+                    doc.setFontSize(header ? 8 : 7);
+                    const lineas = cells.map(function (c, i) {
+                        return doc.splitTextToSize(String(c === null || c === undefined ? '' : c), widths[i] - 2);
+                    });
+                    const alto = Math.max.apply(null, lineas.map(function (l) { return l.length; })) * 3.2 + 2;
+                    if (y + alto > 200) { doc.addPage(); y = 15; }
+                    if (header) {
+                        doc.setFillColor(219, 234, 254);
+                        doc.rect(M, y - 3.2, widths.reduce(function (a, b) { return a + b; }, 0), alto, 'F');
+                    }
+                    let x = M;
+                    cells.forEach(function (c, i) {
+                        doc.text(lineas[i], x + 1, y);
+                        doc.setDrawColor(200, 200, 200);
+                        doc.rect(x, y - 3.2, widths[i], alto);
+                        x += widths[i];
+                    });
+                    y += alto;
+                };
+
+                drawRow(rows[0], true);
+                rows.slice(1).forEach(function (r) { drawRow(r, false); });
+                doc.save('Reporte_ADA4_Pensadores_Economicos.pdf');
+                showToast('Reporte PDF descargado.');
+            } catch (e) { showToast('Error al generar PDF: ' + e.message); }
+        }
+
+        // ============================================================
+        // ACCESO AL INFORME POR CÓDIGO, UNA VISTA POR ALUMNO Y CÓDIGOS DOCENTES
+        // ============================================================
+        const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin 0, O, 1, I
+
+        function genCode() {
+            let s = '';
+            for (let i = 0; i < 6; i++) s += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+            return s;
+        }
+        function codigoDe(student) { return codigos[safeKey(student)] || ''; }
+
+        async function ensureCodigos() {
+            if (!db || !codigosLoaded || ensureCodigosBusy) { renderCodigosPanel(); return; }
+            const missing = todosLosEstudiantes().filter(st => !codigos[safeKey(st)]);
+            if (missing.length === 0) { renderCodigosPanel(); return; }
+            ensureCodigosBusy = true;
+            const updates = {};
+            missing.forEach(st => { const k = safeKey(st); codigos[k] = genCode(); updates[k] = codigos[k]; });
+            try {
+                await db.ref(CODES_NODE).update(updates);
+                showToast('Se generaron ' + missing.length + ' códigos nuevos.');
+            } catch (e) { console.error('Error guardando códigos:', e); showToast('Error al guardar códigos: ' + e.message); }
+            ensureCodigosBusy = false;
+            renderCodigosPanel();
+        }
+
+        function renderCodigosPanel() {
+            const box = document.getElementById('codigosPanel');
+            if (!box) return;
+            const list = todosLosEstudiantes();
+            if (list.length === 0) { box.innerHTML = '<p class="text-gray-400 text-sm p-2 text-center">No hay estudiantes.</p>'; return; }
+            box.innerHTML = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-blue-100 text-blue-800">' +
+                '<th class="border p-2 text-left">Estudiante</th>' +
+                '<th class="border p-2 text-center">Código</th>' +
+                '<th class="border p-2 text-center">Vista usada</th>' +
+                '<th class="border p-2 text-center">Acciones</th></tr></thead><tbody>' +
+                list.map(st => {
+                    const k = safeKey(st);
+                    const code = codigos[k] || 'Sin generar';
+                    const visto = !!(vistas[k] && vistas[k].visto);
+                    const enc = encodeURIComponent(st);
+                    return '<tr>' +
+                        '<td class="border p-2">' + escapeHtml(shortName(st)) + '</td>' +
+                        '<td class="border p-2 text-center font-mono font-bold tracking-widest">' + escapeHtml(code) + '</td>' +
+                        '<td class="border p-2 text-center ' + (visto ? 'text-amber-700 font-bold' : 'text-gray-400') + '">' + (visto ? 'Sí' : 'No') + '</td>' +
+                        '<td class="border p-2 text-center"><div class="flex flex-wrap gap-1 justify-center">' +
+                        '<button onclick="copiarCodigo(\'' + enc + '\', this)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-2 py-1 rounded">Copiar código</button>' +
+                        '<button onclick="regenerarCodigo(\'' + enc + '\', this)" class="bg-blue-600 text-white hover:bg-blue-700 px-2 py-1 rounded">Regenerar código</button>' +
+                        '<button onclick="resetVista(\'' + enc + '\', this)" class="bg-amber-500 text-white hover:bg-amber-600 px-2 py-1 rounded">Restablecer vista</button>' +
+                        '<button onclick="copiarCorreo(\'' + enc + '\', this)" class="bg-green-700 text-white hover:bg-green-800 px-2 py-1 rounded">Copiar texto del correo</button>' +
+                        '</div></td></tr>';
+                }).join('') + '</tbody></table>';
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); return true; }
+            } catch (e) { /* se intenta el respaldo */ }
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus(); ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                return ok;
+            } catch (e) { return false; }
+        }
+
+        async function copiarCodigo(enc, btn) {
+            const name = decodeURIComponent(enc);
+            const code = codigoDe(name);
+            if (!code) { showToast('Ese estudiante aún no tiene código.'); return; }
+            const ok = await copyToClipboard(code);
+            showToast(ok ? ('Código copiado: ' + code) : ('No se pudo copiar. Código: ' + code));
+        }
+
+        async function regenerarCodigo(enc, btn) {
+            const name = decodeURIComponent(enc);
+            const k = safeKey(name);
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            const nuevo = genCode();
+            try {
+                await db.ref(CODES_NODE + '/' + k).set(nuevo);
+                codigos[k] = nuevo;
+                renderCodigosPanel();
+                showToast('Código regenerado para ' + shortName(name) + '.');
+            } catch (e) { showToast('Error: ' + e.message); }
+        }
+
+        async function resetVista(enc, btn) {
+            const name = decodeURIComponent(enc);
+            const k = safeKey(name);
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            try {
+                await db.ref(VIEWS_NODE + '/' + k).remove();
+                delete vistas[k];
+                renderCodigosPanel();
+                showToast('Acceso restablecido para ' + shortName(name) + '.');
+            } catch (e) { showToast('Error: ' + e.message); }
+        }
+
+        async function resetAllViews(btn) {
+            if (!db) { showToast('Sin conexión a la nube.'); return; }
+            if (!armButton(btn, '¿Confirmar restablecer TODAS las vistas?')) return;
+            btn.textContent = btn.dataset.origText;
+            btn.classList.remove('ring-2', 'ring-red-300');
+            try {
+                const updates = {};
+                todosLosEstudiantes().forEach(st => { updates[safeKey(st)] = null; });
+                await db.ref(VIEWS_NODE).update(updates);
+                vistas = {};
+                renderCodigosPanel();
+                showToast('Todas las vistas fueron restablecidas.');
+            } catch (e) { showToast('Error: ' + e.message); }
+        }
+
+        async function copiarCorreo(enc, btn) {
+            const name = decodeURIComponent(enc);
+            const code = codigoDe(name);
+            if (!code) { showToast('Ese estudiante aún no tiene código.'); return; }
+            const asunto = 'Tu código personal para el informe de la ADA 4 (Historia y Educación para la Ciudadanía, 1 BGU)';
+            const cuerpo = 'Hola ' + shortName(name) + ': ya está disponible tu informe de la ADA 4 "Pensadores económicos: mercado y Estado" (Historia y Educación para la Ciudadanía, 1 BGU). Tu código personal es: ' + code + '. Para verlo: entra a la aplicación, abre la pestaña "Mi informe", elige tu nombre y escribe tu código. Ahí verás tu autoevaluación, la nota del docente, la nota final y la retroalimentación, y podrás descargar el informe en PDF. Este código es personal, identifica tu informe y se puede usar una sola vez; no lo compartas con otros compañeros. Saludos, Prof. Alberto Ottati';
+            const texto = 'Asunto: ' + asunto + '\n\n' + cuerpo;
+            const ok = await copyToClipboard(texto);
+            showToast(ok ? ('Texto del correo copiado para ' + shortName(name) + '.') : 'No se pudo copiar el texto.');
+        }
+
+        // --- VALIDACIÓN DE ACCESO AL INFORME DEL ALUMNO (nombre + código, una sola vista) ---
+        async function verMiInforme() {
+            const area = document.getElementById('consultaArea');
+            const sel = document.getElementById('consultaEvaluador');
+            const codeInput = document.getElementById('codigoInput');
+            const student = sel ? sel.value : '';
+            const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
+            if (!area) return;
+            if (!student) { showToast('Elige tu nombre.'); return; }
+            if (!code) { showToast('Escribe tu código personal.'); return; }
+            if (consultaUnlockedStudent === student) { renderConsulta(); return; }
+            const k = safeKey(student);
+            const esperado = codigos[k] || '';
+            if (!esperado || code !== esperado) {
+                area.innerHTML = '<p class="text-red-700 bg-red-50 p-4 rounded border border-red-200 text-sm">Código incorrecto. Revísalo con tu docente.</p>';
+                return;
+            }
+            let yaVisto = !!(vistas[k] && vistas[k].visto);
+            if (db) {
+                try { const snap = await db.ref(VIEWS_NODE + '/' + k).once('value'); const v = snap.val(); yaVisto = !!(v && v.visto); }
+                catch (e) { console.error('Error leyendo la vista:', e); }
+            }
+            if (yaVisto) {
+                area.innerHTML = '<p class="text-amber-800 bg-amber-50 p-4 rounded border border-amber-200 text-sm">Tu informe ya fue revisado. Si tuviste un problema técnico, pídele al docente que lo habilite.</p>';
+                return;
+            }
+            const msgFallo = '<p class="text-red-700 bg-red-50 p-4 rounded border border-red-200 text-sm">No se pudo registrar tu vista. Revisa tu conexión e inténtalo de nuevo; si el problema continúa, avísale al docente.</p>';
+            if (db) {
+                try {
+                    await db.ref(VIEWS_NODE + '/' + k).set({ visto: true, ts: Date.now() });
+                    vistas[k] = { visto: true, ts: Date.now() };
+                    consultaUnlockedStudent = student;
+                    renderConsulta();
+                    renderCodigosPanel();
+                } catch (e) {
+                    console.error('Error marcando la vista:', e);
+                    area.innerHTML = msgFallo;
+                }
+            } else {
+                area.innerHTML = msgFallo;
+            }
+        }
+
+        // --- DESCARGA / IMPRESIÓN DEL INFORME DEL ALUMNO ---
+        function _normSlug(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, ''); }
+        function _nombreArchivo(r, ext) { return 'Informe_ADA4_' + (_normSlug(r.student) || 'alumno') + '.' + ext; }
+
+        function informeFilas(r) {
+            return [
+                ['Paralelo', r.paralelo],
+                ['Equipo', r.grupo],
+                ['Autoevaluación', fmtNota(r.notaAuto) + ' / 10'],
+                ['Nota docente', fmtNota(r.notaDoc) + ' / 10'],
+                ['Nota final', fmtNota(r.final) + ' / 10']
+            ].concat(r.criterios.map(function (c, i) {
+                return [(i + 1) + '. ' + c.title, c.val === null ? 'Pendiente' : fmt2(c.val) + ' / 10 · ' + c.label];
+            }));
+        }
+
+        function informeImprimibleInner(r) {
+            const rows = informeFilas(r).map(function (p) {
+                return '<tr><td class="lbl">' + escapeHtml(p[0]) + '</td><td class="val">' + escapeHtml(p[1]) + '</td></tr>';
+            }).join('');
+            return '<h2>Informe ADA 4 - Pensadores económicos: mercado y Estado</h2>' +
+                '<p class="sub">Historia y Educación para la Ciudadanía - 1 BGU</p>' +
+                '<p class="stu"><b>Estudiante:</b> ' + escapeHtml(r.student) + '</p>' +
+                '<table>' + rows + '</table>' +
+                (r.justificacion ? '<h3>Justificación del estudiante</h3><p class="fb">' + escapeHtml(r.justificacion) + '</p>' : '') +
+                (r.comentario ? '<h3>Comentario del docente</h3><p class="fb">' + escapeHtml(r.comentario) + '</p>' : '') +
+                '<h3>Retroalimentación</h3>' +
+                '<p class="fb">' + escapeHtml(r.fb) + '</p>' +
+                '<p class="pie">Prof. Alberto Ottati R. - Logos Academy</p>';
+        }
+
+        function informeImprimibleHTML(r) {
+            return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+                '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+                '<title>Informe ADA 4 - ' + escapeHtml(r.student) + '</title>' +
+                '<style>' +
+                'body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; color: #1f2937; margin: 32px; }' +
+                'h2 { font-size: 20px; color: #1e3a8a; margin-bottom: 2px; }' +
+                '.sub { color: #4b5563; font-size: 13px; margin-bottom: 16px; }' +
+                '.stu { font-size: 16px; margin-bottom: 12px; }' +
+                'table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }' +
+                'td { border: 1px solid #d1d5db; padding: 6px 8px; }' +
+                'td.val { font-weight: bold; text-align: right; }' +
+                'h3 { font-size: 15px; color: #1e3a8a; margin: 12px 0 6px; }' +
+                '.fb { font-size: 13px; line-height: 1.5; }' +
+                '.pie { margin-top: 24px; font-size: 11px; color: #6b7280; }' +
+                '</style></head><body>' + informeImprimibleInner(r) + '</body></html>';
+        }
+
+        function informeTextoPlano(r) {
+            const L = [];
+            L.push('INFORME ADA 4 - Pensadores económicos: mercado y Estado');
+            L.push('Historia y Educación para la Ciudadanía - 1 BGU');
+            L.push('Estudiante: ' + r.student);
+            L.push('');
+            informeFilas(r).forEach(function (p) { L.push(p[0] + ': ' + p[1]); });
+            if (r.justificacion) { L.push(''); L.push('Justificación del estudiante:'); L.push(r.justificacion); }
+            if (r.comentario) { L.push(''); L.push('Comentario del docente:'); L.push(r.comentario); }
+            L.push('');
+            L.push('Retroalimentación:');
+            L.push(r.fb);
+            L.push('');
+            L.push('Prof. Alberto Ottati R. - Logos Academy');
+            return L.join('\n');
+        }
+
+        function generarPDF(r, jsPDFCtor) {
+            const doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+            const M = 15; let y = 20;
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+            doc.setTextColor(30, 58, 138);
+            doc.text('Informe ADA 4', M, y); y += 7;
+            doc.setFontSize(11);
+            doc.text('Pensadores economicos: mercado y Estado', M, y); y += 6;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(75, 85, 99);
+            doc.text('Historia y Educacion para la Ciudadania - 1 BGU', M, y); y += 11;
+            doc.setTextColor(17, 24, 39); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+            doc.text('Estudiante: ' + r.student, M, y); y += 8;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+            informeFilas(r).forEach(function (p) {
+                if (y > 275) { doc.addPage(); y = 20; }
+                const lineas = doc.splitTextToSize(String(p[1]), 85);
+                doc.text(String(p[0]), M, y);
+                doc.text(lineas, 105, y);
+                y += Math.max(1, lineas.length) * 6;
+            });
+            const bloque = function (titulo, texto) {
+                if (!texto) return;
+                if (y > 250) { doc.addPage(); y = 20; }
+                y += 4;
+                doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 58, 138);
+                doc.text(titulo, M, y); y += 6;
+                doc.setFont('helvetica', 'normal'); doc.setTextColor(55, 65, 81);
+                doc.splitTextToSize(texto, 180).forEach(function (line) {
+                    if (y > 280) { doc.addPage(); y = 20; }
+                    doc.text(line, M, y); y += 5.5;
+                });
+            };
+            bloque('Justificación del estudiante', r.justificacion);
+            bloque('Comentario del docente', r.comentario);
+            bloque('Retroalimentación', r.fb);
+            doc.save(_nombreArchivo(r, 'pdf'));
+        }
+
+        function mostrarOverlayInforme(r) {
+            cerrarInformeOverlay();
+            const o = document.createElement('div');
+            o.id = 'informeOverlay';
+            o.className = 'informe-overlay';
+            o.innerHTML = '<div class="informe-toolbar">' +
+                '<button onclick="imprimirInforme()" class="bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-bold">Imprimir (Cmd+P / Ctrl+P)</button>' +
+                '<button onclick="descargarInformeHTML()" class="bg-gray-700 text-white px-3 py-1.5 rounded text-sm">Descargar HTML</button>' +
+                '<button onclick="descargarInformeTXT()" class="bg-gray-700 text-white px-3 py-1.5 rounded text-sm">Descargar TXT</button>' +
+                '<button onclick="cerrarInformeOverlay()" class="bg-red-500 text-white px-3 py-1.5 rounded text-sm">Cerrar</button>' +
+                '</div>' +
+                '<div class="informe-print">' + informeImprimibleInner(r) + '</div>';
+            document.body.appendChild(o);
+        }
+        function cerrarInformeOverlay() { const o = document.getElementById('informeOverlay'); if (o) o.remove(); }
+        function imprimirInforme() {
+            try { window.print(); }
+            catch (e) { showToast('No se pudo abrir el diálogo de impresión. Usa Cmd+P o Ctrl+P, o descarga el informe.'); }
+        }
+        function descargarInformeHTML() {
+            if (!informeActual) return;
+            _download(new Blob([informeImprimibleHTML(informeActual)], { type: 'text/html;charset=utf-8;' }), _nombreArchivo(informeActual, 'html'));
+            showToast('Informe HTML descargado.');
+        }
+        function descargarInformeTXT() {
+            if (!informeActual) return;
+            _download(new Blob([informeTextoPlano(informeActual)], { type: 'text/plain;charset=utf-8;' }), _nombreArchivo(informeActual, 'txt'));
+            showToast('Informe TXT descargado.');
+        }
+
+        function descargarInforme() {
+            if (!consultaUnlockedStudent) { showToast('Primero abre tu informe.'); return; }
+            const r = buildReport(consultaUnlockedStudent);
+            informeActual = r;
+            const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (window.jsPDF || null);
+            if (jsPDFCtor) {
+                try { generarPDF(r, jsPDFCtor); showToast('Informe PDF descargado.'); return; }
+                catch (e) { console.error('Error generando PDF:', e); }
+            }
+            mostrarOverlayInforme(r);
+            showToast('No se pudo cargar el generador de PDF. Se abrió una versión imprimible: usa Cmd+P o Ctrl+P, o descarga el informe.');
+        }
+
+</script>
+</body>
+</html>
