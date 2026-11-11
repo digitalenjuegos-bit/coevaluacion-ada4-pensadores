@@ -1285,6 +1285,20 @@
             if (el) el.textContent = enviadas + (enviadas === 1 ? ' autoevaluación' : ' autoevaluaciones');
             const pc = document.getElementById('participationCounter');
             if (pc) pc.textContent = 'Participación: ' + enviadas + ' de ' + total + ' estudiantes han enviado su autoevaluación';
+
+            let docentes = 0, finales = 0;
+            PARALELOS.forEach(function (p) {
+                const docs = recordsFor(docenteRecords, p);
+                orderedRoster(p).forEach(function (st) {
+                    if (docs[safeKey(st)]) docentes++;
+                    const e = estadoDe(st, p);
+                    if (e.final !== null) finales++;
+                });
+            });
+            const ed = document.getElementById('statDocentes');
+            if (ed) ed.textContent = docentes + (docentes === 1 ? ' evaluación docente' : ' evaluaciones docentes');
+            const ef = document.getElementById('statFinales');
+            if (ef) ef.textContent = finales + (finales === 1 ? ' nota final completa' : ' notas finales completas');
         }
 
         // ============================================================
@@ -1371,7 +1385,7 @@
                         g ? groupLabel(g.id) : '',
                         e.notaAuto === null ? '' : e.notaAuto,
                         e.notaDoc === null ? '' : e.notaDoc,
-                        e.final === null ? '' : e.final,
+                        e.final === null ? 'Pendiente' : e.final,
                         buildFeedbackAuto(student, p),
                         (e.doc && e.doc.comentario) ? e.doc.comentario : ''
                     ]);
@@ -1395,7 +1409,7 @@
                         numOrNull(c.c4) === null ? '' : numOrNull(c.c4),
                         e.notaDoc === null ? '' : e.notaDoc,
                         e.notaAuto === null ? '' : e.notaAuto,
-                        e.final === null ? '' : e.final,
+                        e.final === null ? 'Pendiente' : e.final,
                         (e.auto && e.auto.justificacion) ? e.auto.justificacion : '',
                         (e.doc && e.doc.comentario) ? e.doc.comentario : ''
                     ]);
