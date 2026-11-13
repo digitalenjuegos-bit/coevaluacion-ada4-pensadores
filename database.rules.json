@@ -1,0 +1,36 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "autoevaluaciones_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": true
+    },
+
+    "notas_vistas_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": true
+    },
+
+    "docente_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'vgZPCZHeqlQ7zFrx3zvh8zyZX6G3'"
+    },
+
+    "config_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'vgZPCZHeqlQ7zFrx3zvh8zyZX6G3'"
+    },
+
+    "equipos_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'vgZPCZHeqlQ7zFrx3zvh8zyZX6G3'"
+    },
+
+    "codigos_guion_pensadores_ada4": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'vgZPCZHeqlQ7zFrx3zvh8zyZX6G3'"
+    }
+  }
+}
