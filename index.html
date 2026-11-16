@@ -559,8 +559,7 @@
         function getAuto(student, paralelo) { return recordsFor(autoRecords, paralelo)[safeKey(student)] || null; }
         function getDocente(student, paralelo) { return recordsFor(docenteRecords, paralelo)[safeKey(student)] || null; }
         function findGroupOf(student, paralelo) {
-            const source = teamsCloud[safeKey(paralelo)] && Array.isArray(teamsCloud[safeKey(paralelo)].teams)
-                ? teamsCloud[safeKey(paralelo)].teams : DEFAULT_TEAMS_BY_PARALLEL[paralelo] || [];
+            const source = findGroupsForParallel(paralelo);
             return source.find(t => Array.isArray(t.members) && t.members.includes(student)) || null;
         }
         function orderedRoster(paralelo) {
@@ -570,9 +569,19 @@
             (ROSTERS[paralelo] || []).forEach(m => { if (!out.includes(m)) out.push(m); });
             return out;
         }
+        // Firebase no guarda arreglos vacíos: un equipo sin integrantes vuelve de la nube
+        // sin la propiedad members (y el arreglo de equipos puede llegar como objeto).
+        // Se normaliza para que el editor nunca opere sobre members indefinido.
+        function normalizeTeams(raw) {
+            const list = Array.isArray(raw) ? raw : (raw && typeof raw === 'object' ? Object.values(raw) : []);
+            return list.filter(Boolean).map(function (t, i) {
+                const members = Array.isArray(t.members) ? t.members : (t.members && typeof t.members === 'object' ? Object.values(t.members) : []);
+                return { id: t.id || ('G' + (i + 1)), topic: t.topic || '', members: members.filter(Boolean), maxMembers: t.maxMembers || 4 };
+            });
+        }
         function findGroupsForParallel(paralelo) {
             const cloud = teamsCloud[safeKey(paralelo)];
-            if (cloud && Array.isArray(cloud.teams)) return cloud.teams;
+            if (cloud && cloud.teams) return normalizeTeams(cloud.teams);
             return DEFAULT_TEAMS_BY_PARALLEL[paralelo] || [];
         }
 
@@ -872,12 +881,12 @@
         function editorRemoveFromTeam(encName, teamIndex) {
             const name = decodeURIComponent(encName);
             if (!teams[teamIndex]) return;
-            teams[teamIndex].members = teams[teamIndex].members.filter(m => m !== name);
+            teams[teamIndex].members = (teams[teamIndex].members || []).filter(m => m !== name);
             renderTeamEditor();
         }
         function editorAssignToTeam(encName, teamIndex) {
             const name = decodeURIComponent(encName);
-            teams.forEach(t => { t.members = t.members.filter(m => m !== name); });
+            teams.forEach(t => { t.members = (Array.isArray(t.members) ? t.members : []).filter(m => m !== name); });
             if (teamIndex >= 0 && teams[teamIndex]) teams[teamIndex].members.push(name);
             renderTeamEditor();
         }
