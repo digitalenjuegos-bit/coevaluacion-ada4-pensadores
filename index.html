@@ -127,7 +127,7 @@
                     <ul class="list-disc pl-6 mt-2">
                         <li>La evaluación docente pesa setenta por ciento y la autoevaluación, treinta por ciento.</li>
                         <li>La nota final permanece pendiente hasta que existan las dos calificaciones.</li>
-                        <li>Los cuatro criterios docentes se puntúan de cero a diez y se promedian con igual ponderación.</li>
+                        <li>Los cuatro criterios docentes se puntúan de cero a diez y se ponderan como indica la guía del proyecto: Conocimiento y comprensión, peso 3; Investigación, peso 2; Comunicación, peso 3; Pensamiento crítico, peso 2.</li>
                         <li>Tu autoevaluación es la nota que escribes personalmente; no se calcula a partir de los descriptores que marques como apoyo.</li>
                     </ul>
                     <p class="mt-3"><b>Colores de la nota final:</b>
@@ -155,7 +155,7 @@
                     </div>
                     <div class="p-4 bg-white rounded border">
                         <h3 class="font-semibold mb-2">2. Escala y nota final</h3>
-                        <p>Cada criterio docente vale de 0 a 10. La nota docente es su promedio, con dos decimales.</p>
+                        <p>Cada criterio docente vale de 0 a 10. La nota docente es su promedio ponderado (pesos 3, 2, 3 y 2), con dos decimales.</p>
                         <p class="mt-2">La nota final combina la nota docente con un peso de setenta por ciento y la autoevaluación con un peso de treinta por ciento.</p>
                     </div>
                 </div>
@@ -344,7 +344,7 @@
 
         const DOC_RUBRIC = [
             {
-                key: 'c1', title: 'Pensador, contexto e ideas económicas',
+                key: 'c1', peso: 3, title: 'Pensador, contexto e ideas económicas',
                 short: 'la explicación del pensador y de sus ideas',
                 tip: 'precisar su época, sus ideas centrales y su postura frente al mercado y al Estado con terminología económica',
                 auto: 'Expliqué el personaje, su época y contexto, sus ideas centrales y su postura frente al mercado y al Estado con terminología económica precisa.',
@@ -357,7 +357,7 @@
                 ]
             },
             {
-                key: 'c2', title: 'Investigación, fuentes y documentos del proceso',
+                key: 'c2', peso: 2, title: 'Investigación, fuentes y documentos del proceso',
                 short: 'la investigación y la documentación del proceso',
                 tip: 'contrastar fuentes confiables y variadas, citarlas con corrección y conservar documentos de sesión y una autoevaluación reflexiva',
                 auto: 'Investigué con fuentes confiables y variadas, las cité correctamente y evalué mi proceso en los documentos de sesión y en esta autoevaluación.',
@@ -370,7 +370,7 @@
                 ]
             },
             {
-                key: 'c3', title: 'Comunicación escrita en el guion de cuatro escenas',
+                key: 'c3', peso: 3, title: 'Comunicación escrita en el guion de cuatro escenas',
                 short: 'la organización y claridad del guion escrito',
                 tip: 'revisar la secuencia de las cuatro escenas, la caracterización escrita de las voces y la comprensión de argumentos y réplicas',
                 auto: 'Comuniqué mis ideas en un guion de cuatro escenas, con voces escritas creíbles, argumentos y réplicas comprensibles y participación documentada del equipo cuando correspondió.',
@@ -383,7 +383,7 @@
                 ]
             },
             {
-                key: 'c4', title: 'Evaluación de la corriente y aplicación al Ecuador',
+                key: 'c4', peso: 2, title: 'Evaluación de la corriente y aplicación al Ecuador',
                 short: 'la evaluación de la corriente y su aplicación al Ecuador',
                 tip: 'responder a los argumentos rivales y aplicar la corriente a un caso ecuatoriano reconociendo tanto su valor como sus limitaciones',
                 auto: 'Evalué la solidez de mi corriente frente a la rival y apliqué sus ideas al caso ecuatoriano, reconociendo su valor y sus limitaciones.',
@@ -396,6 +396,8 @@
                 ]
             }
         ];
+        // Pesos de la guía publicada en Hyperclass: A3 · B2 · C3 · D2 (suman 10).
+        function pesoTxt(c) { return ' (peso ' + c.peso + ')'; }
         const AUTO_LEVELS = ['Excelente', 'Bueno', 'En proceso', 'Inicial', 'Sin evidencia'];
         // --- NÓMINAS OFICIALES 1BGU 2026-2027 (Listas_por_curso_2026-2027 + Historia 1° Bachillerato, corte 25-sep-2026) ---
         const ROSTERS = {
@@ -950,7 +952,7 @@
             box.innerHTML = '<section class="p-4 bg-blue-50 border border-blue-200 rounded-lg" aria-labelledby="auto-guide-title">' +
                 '<h3 id="auto-guide-title" class="text-xl font-bold text-blue-900 mb-3">Guía para revisar tu trabajo</h3>' +
                 '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">' + DOC_RUBRIC.map((c, i) =>
-                    '<article class="p-3 bg-white rounded border"><h4 class="font-bold text-blue-900">' + (i + 1) + '. ' + escapeHtml(c.title) + '</h4>' +
+                    '<article class="p-3 bg-white rounded border"><h4 class="font-bold text-blue-900">' + (i + 1) + '. ' + escapeHtml(c.title + pesoTxt(c)) + '</h4>' +
                     '<p class="mt-2">' + escapeHtml(c.auto) + '</p></article>'
                 ).join('') + '</div>' +
                 '<div class="mt-4 p-3 bg-white rounded border"><h4 class="font-bold">Niveles de referencia</h4>' +
@@ -977,7 +979,7 @@
             const criteriaHtml = DOC_RUBRIC.map((c, i) => {
                 const current = typeof crit[c.key] === 'string' ? crit[c.key] : '';
                 return '<div class="p-3 border rounded bg-gray-50">' +
-                    '<label for="auto-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title) + '</label>' +
+                    '<label for="auto-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title + pesoTxt(c)) + '</label>' +
                     '<select id="auto-' + c.key + '" onchange="autoFormDirty=true" class="mt-2 w-full border rounded px-3 py-2 bg-white">' +
                     '<option value="">Sin marcar, solo uso la guía</option>' + AUTO_LEVELS.map(l => '<option value="' + l + '"' + (current === l ? ' selected' : '') + '>' + l + '</option>').join('') +
                     '</select></div>';
@@ -1035,7 +1037,7 @@
         // ============================================================
         // MODELO DE NOTAS — ADA 4 "Pensadores económicos: mercado y Estado"
         // La autoevaluación es la nota que el estudiante escribe y justifica.
-        // La nota docente es el promedio de los cuatro criterios de DOC_RUBRIC.
+        // La nota docente es el promedio ponderado de los criterios de DOC_RUBRIC (pesos 3, 2, 3, 2).
         // La nota final pondera la nota docente al 70 % y la autoevaluación al 30 %.
         // ============================================================
 
@@ -1051,7 +1053,9 @@
             const c = criterios || {};
             const vals = DOC_RUBRIC.map(function (x) { return numOrNull(c[x.key]); });
             if (vals.some(function (v) { return v === null || v < 0 || v > 10; })) return null;
-            return round2(vals.reduce(function (a, b) { return a + b; }, 0) / vals.length);
+            let suma = 0, pesos = 0;
+            DOC_RUBRIC.forEach(function (x, i) { suma += vals[i] * x.peso; pesos += x.peso; });
+            return round2(suma / pesos);
         }
 
         function todosLosEstudiantes() {
@@ -1171,7 +1175,7 @@
             DOC_RUBRIC.forEach(function (c, i) {
                 const v = numOrNull(docDraft.criterios[c.key]);
                 html += '<div class="p-3 border rounded bg-gray-50">' +
-                    '<label for="docCrit-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title) + '</label>' +
+                    '<label for="docCrit-' + c.key + '" class="block font-bold text-gray-800">' + (i + 1) + '. ' + escapeHtml(c.title + pesoTxt(c)) + '</label>' +
                     '<input id="docCrit-' + c.key + '" type="number" min="0" max="10" step="0.1" inputmode="decimal" value="' + (v === null ? '' : v) + '" ' +
                     'oninput="docSetCriterio(\'' + c.key + '\', this.value)" class="mt-2 w-full md:w-32 px-3 py-2 border border-blue-400 rounded bg-white">' +
                     '<span id="docDesc-' + c.key + '" class="mt-1 block text-xs leading-snug text-gray-400">Sin puntuación todavía.</span>' +
