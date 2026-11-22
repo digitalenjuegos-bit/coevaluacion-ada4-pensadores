@@ -127,6 +127,7 @@
                     <ul class="list-disc pl-6 mt-2">
                         <li>La evaluación docente pesa setenta por ciento y la autoevaluación, treinta por ciento.</li>
                         <li>La nota final permanece pendiente hasta que existan las dos calificaciones.</li>
+                        <li>Si la nota final tiene un decimal de 0,50 o más, se redondea al entero superior; en los demás casos se conserva.</li>
                         <li>Los cuatro criterios docentes se puntúan de cero a diez y se ponderan como indica la guía del proyecto: Conocimiento y comprensión, peso 3; Investigación, peso 2; Comunicación, peso 3; Pensamiento crítico, peso 2.</li>
                         <li>Tu autoevaluación es la nota que escribes personalmente; no se calcula a partir de los descriptores que marques como apoyo.</li>
                     </ul>
@@ -541,7 +542,9 @@
         function notaValida(v) { return typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 10; }
         function calcNotaFinal(notaDocente, autoevaluacion) {
             if (!notaValida(notaDocente) || !notaValida(autoevaluacion)) return null;
-            return round2(notaDocente * PESO_DOCENTE + autoevaluacion * PESO_AUTO);
+            const f = round2(notaDocente * PESO_DOCENTE + autoevaluacion * PESO_AUTO);
+            // Redondeo solo a favor del estudiante: decimal de 0,50 o más sube al entero.
+            return (f - Math.floor(f)) >= 0.5 - 1e-9 ? Math.ceil(f) : f;
         }
         function scoreClass(v) {
             if (!notaValida(v)) return 'score-pending';
